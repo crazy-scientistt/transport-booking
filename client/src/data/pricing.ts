@@ -1,17 +1,14 @@
 /*
   PRICING DATA - Premium Transportation Services
   
-  DYNAMIC RAMADAN PRICING:
-  - Pricing is now automatically determined by booking date using Islamic calendar detection
-  - No manual toggle needed - system is perpetual and automatic
-  - Uses Aladhan API to detect Ramadan dates with intelligent caching
-  - When a customer selects a date, the system checks if it falls within Ramadan
-  - If during Ramadan → ramadanPricing is applied
-  - If outside Ramadan → standardPricing is applied
-  
-  Both pricing structures are maintained below for the dynamic system.
-  See: utils/ramadanUtils.ts and utils/dynamicPricingUtils.ts for implementation
+  Developer Toggle: Set USE_RAMADAN_PRICING to true during Ramadan season
+  Both pricing structures are maintained for easy switching
 */
+
+// ============================================
+// DEVELOPER TOGGLE - Change this for Ramadan
+// ============================================
+export const USE_RAMADAN_PRICING = false;
 
 // ============================================
 // VEHICLE TYPES
@@ -39,7 +36,7 @@ export const vehicles: Vehicle[] = [
     capacity: 4,
     description: 'Comfortable sedan perfect for small families or couples. Smooth ride with premium comfort.',
     descriptionAr: 'سيارة سيدان مريحة مثالية للعائلات الصغيرة أو الأزواج. رحلة سلسة مع راحة فاخرة.',
-    image: '/assets/vehicles/camry.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/LPhqFecPIyxERXit.jpg',
     featured: true,
   },
   {
@@ -51,7 +48,7 @@ export const vehicles: Vehicle[] = [
     capacity: 7,
     description: 'Modern luxury van with futuristic design. Spacious interior for family groups.',
     descriptionAr: 'فان فاخر حديث بتصميم مستقبلي. مساحة داخلية واسعة للمجموعات العائلية.',
-    image: '/assets/vehicles/staria.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/rFxkOtZxNPMLzPzV.jpg',
   },
   {
     id: 'h1',
@@ -62,7 +59,7 @@ export const vehicles: Vehicle[] = [
     capacity: 10,
     description: 'Versatile passenger van ideal for medium-sized groups. Reliable and comfortable.',
     descriptionAr: 'فان ركاب متعدد الاستخدامات مثالي للمجموعات المتوسطة. موثوق ومريح.',
-    image: '/assets/vehicles/h1.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/GScnkUjqLnNhynqR.jpg',
     featured: true,
   },
   {
@@ -74,7 +71,7 @@ export const vehicles: Vehicle[] = [
     capacity: 12,
     description: 'Spacious commuter van perfect for larger groups. Excellent for pilgrim groups.',
     descriptionAr: 'فان ركاب واسع مثالي للمجموعات الكبيرة. ممتاز لمجموعات الحجاج.',
-    image: '/assets/vehicles/hiace.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/TAlYCNzpBLAkgddG.jpg',
   },
   {
     id: 'yukon',
@@ -85,7 +82,7 @@ export const vehicles: Vehicle[] = [
     capacity: 7,
     description: 'Premium luxury SUV for VIP travel. Ultimate comfort and prestige.',
     descriptionAr: 'سيارة دفع رباعي فاخرة للسفر VIP. راحة ومكانة فائقة.',
-    image: '/assets/vehicles/yukon.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/JcrRhvunIQiNzqWb.jpg',
     featured: true,
   },
   {
@@ -97,7 +94,7 @@ export const vehicles: Vehicle[] = [
     capacity: 24,
     description: 'Full-size bus for large pilgrim groups. Maximum capacity with comfort.',
     descriptionAr: 'باص كامل الحجم لمجموعات الحجاج الكبيرة. أقصى سعة مع الراحة.',
-    image: '/assets/vehicles/coaster.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/TSxDeSrRAvuMvCgF.jpg',
   },
 ];
 
@@ -458,15 +455,9 @@ export const ramadanPricing: Record<string, Record<string, number>> = {
 // ============================================
 // HELPER FUNCTIONS
 // ============================================
-
-/**
- * DEPRECATED: Use getPriceForServiceOnDate from utils/dynamicPricingUtils.ts instead
- * This function is kept for backward compatibility but uses standard pricing only
- */
 export function getPrice(vehicleId: string, serviceId: string): number | null {
-  // Always return standard pricing for backward compatibility
-  // New code should use getPriceForServiceOnDate with date parameter
-  return standardPricing[vehicleId]?.[serviceId] ?? null;
+  const pricing = USE_RAMADAN_PRICING ? ramadanPricing : standardPricing;
+  return pricing[vehicleId]?.[serviceId] ?? null;
 }
 
 export function getVehicleById(id: string): Vehicle | undefined {
@@ -482,9 +473,8 @@ export function getServicesByCategory(categoryId: string): Service[] {
 }
 
 export function getAvailableServicesForVehicle(vehicleId: string): Service[] {
-  // Use standard pricing to get available services
-  // Actual pricing tier (standard vs ramadan) is determined by date in dynamicPricingUtils.ts
-  const vehiclePricing = standardPricing[vehicleId];
+  const pricing = USE_RAMADAN_PRICING ? ramadanPricing : standardPricing;
+  const vehiclePricing = pricing[vehicleId];
   if (!vehiclePricing) return [];
   
   return services.filter(s => vehiclePricing[s.id] !== undefined);
@@ -495,4 +485,4 @@ export function formatPrice(price: number): string {
 }
 
 // Hero banner image
-export const heroBannerImage = '/assets/vehicles/hero.jpg';
+export const heroBannerImage = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/lqSPAhXvUmEbFEqc.jpg';
