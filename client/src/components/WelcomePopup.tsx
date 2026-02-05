@@ -146,7 +146,7 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
               className="p-6"
             >
               <h3 className="font-display text-lg font-semibold mb-4">Select Your Vehicle</h3>
-              <ScrollArea className="h-[500px] sm:h-[400px] pr-4">
+              <ScrollArea className="h-[60vh] sm:h-[400px] pr-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {vehicles.map((vehicle) => (
                     <motion.button
@@ -156,7 +156,7 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
                       onClick={() => handleVehicleSelect(vehicle)}
                       className="group relative overflow-hidden rounded-xl border border-border/50 hover:border-gold transition-all text-left"
                     >
-                      <div className="aspect-video sm:aspect-[16/10] overflow-hidden">
+                      <div className="aspect-square sm:aspect-[16/10] overflow-hidden bg-sand">
                         <img
                           src={vehicle.image}
                           alt={vehicle.name}

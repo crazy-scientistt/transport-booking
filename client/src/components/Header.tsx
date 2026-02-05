@@ -57,10 +57,14 @@ export default function Header({ onCartClick }: HeaderProps) {
           {/* Logo */}
           <a href="/" className="flex items-center gap-2 group">
             <div className="hidden sm:block">
-             <h1 className="font-display text-lg md:text-xl font-semibold text-black group-hover:text-emerald transition-colors">
+             <h1 className={`font-display text-lg md:text-xl font-semibold transition-colors ${
+        isScrolled ? 'text-foreground group-hover:text-emerald' : 'text-white group-hover:text-gold'
+      }`}>
       Umrah Taxi
               </h1>
-              <p className="text-xs text-muted-foreground -mt-1">Sacred Journey Services</p>
+              <p className={`text-xs -mt-1 transition-colors ${
+        isScrolled ? 'text-muted-foreground' : 'text-white/80'
+      }`}>Sacred Journey Services</p>
             </div>
           </a>
 
