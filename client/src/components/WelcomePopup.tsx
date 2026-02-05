@@ -1,3 +1,4 @@
+
 /*
   DESIGN: Desert Oasis Luxury
   - Welcome modal for quick booking
@@ -134,11 +135,6 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
           <p className="text-white/80 mt-2">
             Book your transportation service in just a few clicks
           </p>
-          <div className="mt-3 p-3 bg-white/10 rounded-lg border border-white/20">
-            <p className="text-sm text-white/95 font-medium">
-              ⭐ Special Notice: All prices are 30% higher fare from 18 to 30 Ramadan
-            </p>
-          </div>
         </div>
 
         <AnimatePresence mode="wait">
