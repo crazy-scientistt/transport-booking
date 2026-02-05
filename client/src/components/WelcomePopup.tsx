@@ -156,11 +156,11 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
                       onClick={() => handleVehicleSelect(vehicle)}
                       className="group relative overflow-hidden rounded-xl border border-border/50 hover:border-gold transition-all text-left"
                     >
-                      <div className="aspect-square sm:aspect-[16/10] overflow-hidden bg-sand">
+                      <div className="aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-sand">
                         <img
                           src={vehicle.image}
                           alt={vehicle.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="w-full h-full object-contain object-top sm:object-cover sm:object-center group-hover:scale-105 transition-transform duration-500"
                         />
                       </div>
                       <div className="p-4">
