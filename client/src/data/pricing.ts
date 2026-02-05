@@ -1,14 +1,17 @@
 /*
   PRICING DATA - Premium Transportation Services
   
-  Developer Toggle: Set USE_RAMADAN_PRICING to true during Ramadan season
-  Both pricing structures are maintained for easy switching
+  DYNAMIC RAMADAN PRICING:
+  - Pricing is now automatically determined by booking date using Islamic calendar detection
+  - No manual toggle needed - system is perpetual and automatic
+  - Uses Aladhan API to detect Ramadan dates with intelligent caching
+  - When a customer selects a date, the system checks if it falls within Ramadan
+  - If during Ramadan → ramadanPricing is applied
+  - If outside Ramadan → standardPricing is applied
+  
+  Both pricing structures are maintained below for the dynamic system.
+  See: utils/ramadanUtils.ts and utils/dynamicPricingUtils.ts for implementation
 */
-
-// ============================================
-// DEVELOPER TOGGLE - Change this for Ramadan
-// ============================================
-export const USE_RAMADAN_PRICING = true;
 
 // ============================================
 // VEHICLE TYPES
@@ -455,9 +458,15 @@ export const ramadanPricing: Record<string, Record<string, number>> = {
 // ============================================
 // HELPER FUNCTIONS
 // ============================================
+
+/**
+ * DEPRECATED: Use getPriceForServiceOnDate from utils/dynamicPricingUtils.ts instead
+ * This function is kept for backward compatibility but uses standard pricing only
+ */
 export function getPrice(vehicleId: string, serviceId: string): number | null {
-  const pricing = USE_RAMADAN_PRICING ? ramadanPricing : standardPricing;
-  return pricing[vehicleId]?.[serviceId] ?? null;
+  // Always return standard pricing for backward compatibility
+  // New code should use getPriceForServiceOnDate with date parameter
+  return standardPricing[vehicleId]?.[serviceId] ?? null;
 }
 
 export function getVehicleById(id: string): Vehicle | undefined {

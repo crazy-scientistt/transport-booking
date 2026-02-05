@@ -5,6 +5,7 @@ import { lazy, Suspense } from "react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
+import { RamadanProvider } from "./contexts/RamadanContext";
 
 const Home = lazy(() => import("./pages/Home"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -34,12 +35,14 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
-        <CartProvider>
-          <TooltipProvider>
-            <Toaster richColors position="top-center" />
-            <Router />
-          </TooltipProvider>
-        </CartProvider>
+        <RamadanProvider fallbackToManual={false}>
+          <CartProvider>
+            <TooltipProvider>
+              <Toaster richColors position="top-center" />
+              <Router />
+            </TooltipProvider>
+          </CartProvider>
+        </RamadanProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
