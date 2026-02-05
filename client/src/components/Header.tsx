@@ -57,7 +57,7 @@ export default function Header({ onCartClick }: HeaderProps) {
           {/* Logo */}
           <a href="/" className="flex items-center gap-2 group">
             <div className="hidden sm:block">
-             <h1 className="font-display text-lg md:text-xl font-semibold text-white group-hover:text-emerald transition-colors">
+             <h1 className="font-display text-lg md:text-xl font-semibold text-black group-hover:text-emerald transition-colors">
       Umrah Taxi
               </h1>
               <p className="text-xs text-muted-foreground -mt-1">Sacred Journey Services</p>
