@@ -1,4 +1,3 @@
-
 /*
   DESIGN: Desert Oasis Luxury
   - Welcome modal for quick booking
@@ -9,7 +8,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Users, Calendar, Clock, ChevronRight, Star, ArrowRight } from 'lucide-react';
+import { X, Users, Calendar, Clock, ChevronRight, Star, ArrowRight, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -135,6 +134,14 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
           <p className="text-white/80 mt-2">
             Book your transportation service in just a few clicks
           </p>
+          
+          {/* Ramadan Pricing Notice */}
+          <div className="mt-4 p-3 bg-amber-500/20 border border-amber-300/30 rounded-lg flex items-start gap-2">
+            <AlertCircle className="w-5 h-5 text-amber-200 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-white/95">
+              <strong>Ramadan Notice:</strong> All prices are 30% higher fare from 18 to 30 Ramadan
+            </p>
+          </div>
         </div>
 
         <AnimatePresence mode="wait">
