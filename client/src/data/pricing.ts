@@ -482,8 +482,9 @@ export function getServicesByCategory(categoryId: string): Service[] {
 }
 
 export function getAvailableServicesForVehicle(vehicleId: string): Service[] {
-  const pricing = USE_RAMADAN_PRICING ? ramadanPricing : standardPricing;
-  const vehiclePricing = pricing[vehicleId];
+  // Use standard pricing to get available services
+  // Actual pricing tier (standard vs ramadan) is determined by date in dynamicPricingUtils.ts
+  const vehiclePricing = standardPricing[vehicleId];
   if (!vehiclePricing) return [];
   
   return services.filter(s => vehiclePricing[s.id] !== undefined);
