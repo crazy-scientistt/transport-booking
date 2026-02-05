@@ -1,4 +1,3 @@
-
 // ============================================
 // DEVELOPER TOGGLE - Change this for Ramadan
 // ============================================
@@ -163,6 +162,7 @@ export const services: Service[] = [
 // ============================================
 export const standardPricing: Record<string, Record<string, number>> = {
   camry: {
+    'jabal-khandamah': 150,
     'jeddah-airport-makkah': 250,
     'jeddah-airport-jeddah': 250,
     'makkah-madina': 500,
@@ -182,6 +182,7 @@ export const standardPricing: Record<string, Record<string, number>> = {
     'train-station-makkah': 150,
     'madina-train-hotel': 150,
     'madina-hotel-train': 120,
+    'jeddah-hotel-airport': 200,
     'hourly': 100,
   },
   h1: {
@@ -209,6 +210,7 @@ export const standardPricing: Record<string, Record<string, number>> = {
     'madina-hotel-train': 150,
   },
   staria: {
+    'jabal-khandamah': 170,
     'jeddah-airport-makkah': 350,
     'jeddah-hotel-airport': 200,
     'jeddah-airport-jeddah': 250,
@@ -232,6 +234,7 @@ export const standardPricing: Record<string, Record<string, number>> = {
     'madina-hotel-train': 150,
   },
   hiace: {
+    'jabal-khandamah': 200,
     'jeddah-airport-makkah': 450,
     'jeddah-airport-jeddah': 300,
     'jeddah-hotel-airport': 300,
@@ -255,6 +258,7 @@ export const standardPricing: Record<string, Record<string, number>> = {
     'madina-hotel-train': 250,
   },
   yukon: {
+    'jabal-khandamah': 250,
     'jeddah-airport-makkah': 600,
     'jeddah-airport-jeddah': 400,
     'jeddah-hotel-airport': 300,
@@ -278,6 +282,7 @@ export const standardPricing: Record<string, Record<string, number>> = {
     'madina-hotel-train': 300,
   },
   coaster: {
+    'jabal-khandamah': 300,
     'jeddah-airport-makkah': 800,
     'jeddah-airport-jeddah': 500,
     'jeddah-hotel-airport': 400,
@@ -303,10 +308,11 @@ export const standardPricing: Record<string, Record<string, number>> = {
 };
 
 // ============================================
-// RAMADAN PRICING (Seasonal - Higher rates)
+// RAMADAN PRICING (Seasonal - 30% Higher)
 // ============================================
 export const ramadanPricing: Record<string, Record<string, number>> = {
   camry: {
+    'jabal-khandamah': 195,
     'jeddah-airport-makkah': 350,
     'jeddah-airport-jeddah': 350,
     'makkah-madina': 700,
@@ -326,10 +332,11 @@ export const ramadanPricing: Record<string, Record<string, number>> = {
     'train-station-makkah': 200,
     'madina-train-hotel': 200,
     'madina-hotel-train': 170,
+    'jeddah-hotel-airport': 260,
     'hourly': 150,
   },
   h1: {
-    'jabal-khandamah': 250,
+    'jabal-khandamah': 220,
     'jeddah-airport-makkah': 500,
     'jeddah-hotel-airport': 300,
     'jeddah-airport-jeddah': 350,
@@ -353,6 +360,7 @@ export const ramadanPricing: Record<string, Record<string, number>> = {
     'madina-hotel-train': 200,
   },
   staria: {
+    'jabal-khandamah': 220,
     'jeddah-airport-makkah': 500,
     'jeddah-hotel-airport': 300,
     'jeddah-airport-jeddah': 350,
@@ -376,6 +384,7 @@ export const ramadanPricing: Record<string, Record<string, number>> = {
     'madina-hotel-train': 200,
   },
   hiace: {
+    'jabal-khandamah': 260,
     'jeddah-airport-makkah': 650,
     'jeddah-airport-jeddah': 450,
     'jeddah-hotel-airport': 450,
@@ -399,6 +408,7 @@ export const ramadanPricing: Record<string, Record<string, number>> = {
     'madina-hotel-train': 350,
   },
   yukon: {
+    'jabal-khandamah': 325,
     'jeddah-airport-makkah': 850,
     'jeddah-airport-jeddah': 550,
     'jeddah-hotel-airport': 450,
@@ -422,6 +432,7 @@ export const ramadanPricing: Record<string, Record<string, number>> = {
     'madina-hotel-train': 450,
   },
   coaster: {
+    'jabal-khandamah': 390,
     'jeddah-airport-makkah': 1100,
     'jeddah-airport-jeddah': 700,
     'jeddah-hotel-airport': 550,
