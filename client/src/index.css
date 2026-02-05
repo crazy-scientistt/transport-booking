@@ -48,8 +48,6 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  
-  /* Custom colors for Desert Oasis theme */
   --color-gold: oklch(0.75 0.12 85);
   --color-gold-dark: oklch(0.65 0.14 80);
   --color-emerald: oklch(0.45 0.12 165);
@@ -225,47 +223,47 @@
   }
   
   .text-gold {
-    color: oklch(0.75 0.12 85);
+    color: var(--color-gold);
   }
   
   .text-gold-dark {
-    color: oklch(0.65 0.14 80);
+    color: var(--color-gold-dark);
   }
   
   .text-emerald {
-    color: oklch(0.45 0.12 165);
+    color: var(--color-emerald);
   }
   
   .bg-gold {
-    background-color: oklch(0.75 0.12 85);
+    background-color: var(--color-gold);
   }
   
   .bg-gold-dark {
-    background-color: oklch(0.65 0.14 80);
+    background-color: var(--color-gold-dark);
   }
   
   .bg-emerald {
-    background-color: oklch(0.45 0.12 165);
+    background-color: var(--color-emerald);
   }
   
   .bg-sand {
-    background-color: oklch(0.96 0.02 85);
+    background-color: var(--color-sand);
   }
   
   .bg-sand-dark {
-    background-color: oklch(0.92 0.03 80);
+    background-color: var(--color-sand-dark);
   }
   
   .bg-ivory {
-    background-color: oklch(0.99 0.01 90);
+    background-color: var(--color-ivory);
   }
   
   .border-gold {
-    border-color: oklch(0.75 0.12 85);
+    border-color: var(--color-gold);
   }
   
   .border-emerald {
-    border-color: oklch(0.45 0.12 165);
+    border-color: var(--color-emerald);
   }
   
   /* Golden line accent */
