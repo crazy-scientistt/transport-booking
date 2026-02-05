@@ -56,12 +56,9 @@ export default function Header({ onCartClick }: HeaderProps) {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white flex items-center justify-center">
-              <span className="text-white font-display text-lg md:text-xl font-bold"></span>
-            </div>
             <div className="hidden sm:block">
-              <h1 className="font-display text-lg md:text-xl font-semibold text-foreground group-hover:text-emerald transition-colors">
-                Umrah Taxi
+             <h1 className="font-display text-lg md:text-xl font-semibold text-white group-hover:text-emerald transition-colors">
+      Umrah Taxi
               </h1>
               <p className="text-xs text-muted-foreground -mt-1">Sacred Journey Services</p>
             </div>
