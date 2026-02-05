@@ -1,14 +1,8 @@
-/*
-  PRICING DATA - Premium Transportation Services
-  
-  Developer Toggle: Set USE_RAMADAN_PRICING to true during Ramadan season
-  Both pricing structures are maintained for easy switching
-*/
 
 // ============================================
 // DEVELOPER TOGGLE - Change this for Ramadan
 // ============================================
-export const USE_RAMADAN_PRICING = false;
+export const USE_RAMADAN_PRICING = false; // flase for standard
 
 // ============================================
 // VEHICLE TYPES
@@ -36,7 +30,7 @@ export const vehicles: Vehicle[] = [
     capacity: 4,
     description: 'Comfortable sedan perfect for small families or couples. Smooth ride with premium comfort.',
     descriptionAr: 'سيارة سيدان مريحة مثالية للعائلات الصغيرة أو الأزواج. رحلة سلسة مع راحة فاخرة.',
-    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/LPhqFecPIyxERXit.jpg',
+    image: '/assets/vehicles/camry.jpg',
     featured: true,
   },
   {
@@ -48,7 +42,7 @@ export const vehicles: Vehicle[] = [
     capacity: 7,
     description: 'Modern luxury van with futuristic design. Spacious interior for family groups.',
     descriptionAr: 'فان فاخر حديث بتصميم مستقبلي. مساحة داخلية واسعة للمجموعات العائلية.',
-    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/rFxkOtZxNPMLzPzV.jpg',
+    image: '/assets/vehicles/staria.jpg',
   },
   {
     id: 'h1',
@@ -59,7 +53,7 @@ export const vehicles: Vehicle[] = [
     capacity: 10,
     description: 'Versatile passenger van ideal for medium-sized groups. Reliable and comfortable.',
     descriptionAr: 'فان ركاب متعدد الاستخدامات مثالي للمجموعات المتوسطة. موثوق ومريح.',
-    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/GScnkUjqLnNhynqR.jpg',
+    image: '/assets/vehicles/h1.jpg',
     featured: true,
   },
   {
@@ -71,7 +65,7 @@ export const vehicles: Vehicle[] = [
     capacity: 12,
     description: 'Spacious commuter van perfect for larger groups. Excellent for pilgrim groups.',
     descriptionAr: 'فان ركاب واسع مثالي للمجموعات الكبيرة. ممتاز لمجموعات الحجاج.',
-    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/TAlYCNzpBLAkgddG.jpg',
+    image: '/assets/vehicles/hiace.jpg',
   },
   {
     id: 'yukon',
@@ -82,7 +76,7 @@ export const vehicles: Vehicle[] = [
     capacity: 7,
     description: 'Premium luxury SUV for VIP travel. Ultimate comfort and prestige.',
     descriptionAr: 'سيارة دفع رباعي فاخرة للسفر VIP. راحة ومكانة فائقة.',
-    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/JcrRhvunIQiNzqWb.jpg',
+    image: '/assets/vehicles/yukon.jpg',
     featured: true,
   },
   {
@@ -94,7 +88,7 @@ export const vehicles: Vehicle[] = [
     capacity: 24,
     description: 'Full-size bus for large pilgrim groups. Maximum capacity with comfort.',
     descriptionAr: 'باص كامل الحجم لمجموعات الحجاج الكبيرة. أقصى سعة مع الراحة.',
-    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/TSxDeSrRAvuMvCgF.jpg',
+    image: '/assets/vehicles/coaster.jpg',
   },
 ];
 
@@ -485,4 +479,4 @@ export function formatPrice(price: number): string {
 }
 
 // Hero banner image
-export const heroBannerImage = 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663335243816/lqSPAhXvUmEbFEqc.jpg';
+export const heroBannerImage = '/assets/vehicles/hero.jpg';
