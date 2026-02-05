@@ -8,7 +8,7 @@
 // ============================================
 // DEVELOPER TOGGLE - Change this for Ramadan
 // ============================================
-export const USE_RAMADAN_PRICING = true;
+export const USE_RAMADAN_PRICING = false;
 
 // ============================================
 // VEHICLE TYPES
