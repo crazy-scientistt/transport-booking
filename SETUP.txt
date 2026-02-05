@@ -1,0 +1,51 @@
+HOW TO RUN THIS WEBSITE LOCALLY
+================================
+
+PREREQUISITES:
+- Node.js installed (with npm)
+
+SETUP STEPS:
+
+1. Install pnpm globally (if not already installed):
+   npm install -g pnpm
+
+2. Install project dependencies:
+   pnpm.cmd install
+
+3. Start the development server:
+   pnpm.cmd run dev
+   
+   OR (using npx):
+   npx.cmd vite --host
+
+4. Open your browser and go to:
+   http://localhost:3000/
+
+The site will be available on your local network as well (check terminal output for the Network URL).
+
+STOPPING THE LOCAL SERVER:
+
+Press Ctrl + C in the terminal where the server is running, then press Y to confirm.
+
+Alternatively, close the terminal window entirely.
+
+ADDITIONAL COMMANDS:
+
+- Build for production:
+  pnpm.cmd run build
+
+- Start production server:
+  npm run start
+
+- Type checking:
+  pnpm.cmd run check
+
+- Format code:
+  pnpm.cmd run format
+
+- Preview production build locally:
+  pnpm.cmd run preview
+
+NOTE ON WINDOWS PowerShell:
+If you get a "script is disabled" PowerShell error, use `.cmd` versions above (e.g., `pnpm.cmd` instead of `pnpm`) 
+or use Command Prompt (cmd.exe) instead of PowerShell.
