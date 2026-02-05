@@ -4,9 +4,11 @@
   - Shows all vehicles with one service selection
   - Elegant card-based layout
   - Link to main site for multiple bookings
+  
+  ✨ UPDATED: Now uses dynamic Ramadan pricing based on selected date
 */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Users, Calendar, Clock, ChevronRight, Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,11 +19,12 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
 import { useCart } from '@/contexts/CartContext';
+import { useIsDateRamadanPricingPeriod } from '@/contexts/RamadanContext';
+import { getPriceForServiceOnDate } from '@/utils/dynamicPricingUtils';
 import {
   vehicles,
   Vehicle,
   getAvailableServicesForVehicle,
-  getPrice,
   formatPrice,
 } from '@/data/pricing';
 import { format } from 'date-fns';
@@ -40,16 +43,46 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [step, setStep] = useState<'vehicle' | 'service'>('vehicle');
+  
+  // Dynamic pricing state
+  const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
+  const [loadingPrice, setLoadingPrice] = useState(false);
+  
+  // Check if selected date is in Ramadan pricing period
+  const { isRamadanPricingDate, loading: ramadanLoading } = useIsDateRamadanPricingPeriod(selectedDate || null);
 
   const availableServices = useMemo(() => {
     if (!selectedVehicle) return [];
     return getAvailableServicesForVehicle(selectedVehicle.id);
   }, [selectedVehicle]);
 
-  const selectedPrice = useMemo(() => {
-    if (!selectedVehicle || !selectedServiceId) return null;
-    return getPrice(selectedVehicle.id, selectedServiceId);
-  }, [selectedVehicle, selectedServiceId]);
+  // Recalculate price when vehicle, service, or date changes
+  useEffect(() => {
+    const fetchPrice = async () => {
+      if (!selectedVehicle || !selectedServiceId || !selectedDate) {
+        setSelectedPrice(null);
+        return;
+      }
+
+      setLoadingPrice(true);
+      try {
+        const price = await getPriceForServiceOnDate(
+          selectedVehicle.id,
+          selectedServiceId,
+          selectedDate
+        );
+        setSelectedPrice(price);
+      } catch (error) {
+        console.error('Error fetching price:', error);
+        toast.error('Failed to load price');
+        setSelectedPrice(null);
+      } finally {
+        setLoadingPrice(false);
+      }
+    };
+
+    fetchPrice();
+  }, [selectedVehicle, selectedServiceId, selectedDate]);
 
   const timeSlots = useMemo(() => {
     const slots = [];
@@ -75,6 +108,7 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
   const handleVehicleSelect = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle);
     setSelectedServiceId('');
+    setSelectedPrice(null);
     setStep('service');
   };
 
@@ -109,6 +143,7 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
     setSelectedServiceId('');
     setSelectedDate(undefined);
     setSelectedTime('');
+    setSelectedPrice(null);
     setStep('vehicle');
     onClose();
   };
@@ -230,21 +265,18 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
                       <SelectValue placeholder="Choose a service" />
                     </SelectTrigger>
                     <SelectContent className="max-h-60">
-                      {availableServices.map((service) => {
-                        const price = selectedVehicle ? getPrice(selectedVehicle.id, service.id) : null;
-                        return (
-                          <SelectItem key={service.id} value={service.id}>
-                            <div className="flex justify-between items-center w-full gap-4">
-                              <span>{service.name}</span>
-                              {price && (
-                                <span className="text-emerald font-medium">{formatPrice(price)}</span>
-                              )}
-                            </div>
-                          </SelectItem>
-                        );
-                      })}
+                      {availableServices.map((service) => (
+                        <SelectItem key={service.id} value={service.id}>
+                          <div className="flex justify-between items-center w-full gap-4">
+                            <span>{service.name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    💡 Select a date below to see pricing
+                  </p>
                 </div>
 
                 {/* Date & Time */}
@@ -299,12 +331,46 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
                 </div>
 
                 {/* Price Display */}
-                {selectedPrice && (
-                  <div className="flex justify-between items-center p-4 bg-emerald/10 rounded-lg">
-                    <span className="font-medium">Service Price</span>
-                    <span className="font-display text-2xl font-bold text-emerald">
-                      {formatPrice(selectedPrice)}
-                    </span>
+                {selectedDate && selectedServiceId && (
+                  <div className="relative overflow-hidden">
+                    {loadingPrice || ramadanLoading ? (
+                      <div className="flex justify-between items-center p-4 bg-sand rounded-lg">
+                        <span className="font-medium">Calculating price...</span>
+                        <div className="w-6 h-6 border-2 border-emerald border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    ) : selectedPrice ? (
+                      <div className={`p-4 rounded-lg border-2 transition-all ${
+                        isRamadanPricingDate 
+                          ? 'bg-gradient-to-br from-gold/20 to-gold/10 border-gold/40' 
+                          : 'bg-emerald/10 border-emerald/30'
+                      }`}>
+                        {isRamadanPricingDate && (
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-xl">🌙</span>
+                            <span className="text-xs font-semibold text-gold-dark bg-gold/30 px-2 py-0.5 rounded-full">
+                              Ramadan Pricing Active
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">Service Price</span>
+                          <span className={`font-display text-2xl font-bold ${
+                            isRamadanPricingDate ? 'text-gold-dark' : 'text-emerald'
+                          }`}>
+                            {formatPrice(selectedPrice)}
+                          </span>
+                        </div>
+                        {isRamadanPricingDate && (
+                          <p className="text-xs text-muted-foreground mt-2">
+                            Special pricing for Ramadan period
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex justify-between items-center p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <span className="font-medium text-red-600">Price unavailable</span>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -312,7 +378,7 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
                 <div className="flex flex-col sm:flex-row gap-3 pt-4">
                   <Button
                     onClick={handleBookNow}
-                    disabled={!selectedServiceId || !selectedDate || !selectedTime}
+                    disabled={!selectedServiceId || !selectedDate || !selectedTime || !selectedPrice || loadingPrice}
                     className="flex-1 bg-emerald hover:bg-emerald/90 text-white font-semibold py-6"
                   >
                     Add to Cart

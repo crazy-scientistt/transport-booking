@@ -4,9 +4,11 @@
   - Each service has its own date/time picker
   - Gold accents on selected items
   - Smooth animations
+  
+  ✨ UPDATED: Now uses dynamic Ramadan pricing based on selected date
 */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Clock, Plus, Check, Search, Filter, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,12 +20,13 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useCart } from '@/contexts/CartContext';
+import { useIsDateRamadanPricingPeriod } from '@/contexts/RamadanContext';
+import { getPriceForServiceOnDate } from '@/utils/dynamicPricingUtils';
 import {
   Vehicle,
   Service,
   serviceCategories,
   getAvailableServicesForVehicle,
-  getPrice,
   formatPrice,
   getServicesByCategory,
 } from '@/data/pricing';
@@ -46,8 +49,40 @@ function ServiceItem({ service, vehicle, onAddToCart }: ServiceItemProps) {
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [isAdding, setIsAdding] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  
+  // Dynamic pricing states
+  const [price, setPrice] = useState<number | null>(null);
+  const [loadingPrice, setLoadingPrice] = useState(false);
+  
+  // Check if selected date is in Ramadan pricing period
+  const { isRamadanPricingDate, loading: ramadanLoading } = useIsDateRamadanPricingPeriod(selectedDate || null);
 
-  const price = getPrice(vehicle.id, service.id);
+  // Fetch price when date changes
+  useEffect(() => {
+    const fetchPrice = async () => {
+      if (!selectedDate) {
+        setPrice(null);
+        return;
+      }
+
+      setLoadingPrice(true);
+      try {
+        const fetchedPrice = await getPriceForServiceOnDate(
+          vehicle.id,
+          service.id,
+          selectedDate
+        );
+        setPrice(fetchedPrice);
+      } catch (error) {
+        console.error('Error fetching price:', error);
+        setPrice(null);
+      } finally {
+        setLoadingPrice(false);
+      }
+    };
+
+    fetchPrice();
+  }, [selectedDate, vehicle.id, service.id]);
 
   const timeSlots = useMemo(() => {
     const slots = [];
@@ -87,13 +122,12 @@ function ServiceItem({ service, vehicle, onAddToCart }: ServiceItemProps) {
       setIsAdding(false);
       setSelectedDate(undefined);
       setSelectedTime('');
+      setPrice(null);
       toast.success('Added to cart!', {
         description: `${service.name} with ${vehicle.name}`,
       });
     }, 300);
   };
-
-  if (!price) return null;
 
   return (
     <motion.div
@@ -101,7 +135,11 @@ function ServiceItem({ service, vehicle, onAddToCart }: ServiceItemProps) {
       animate={{ opacity: 1, y: 0 }}
       className="group"
     >
-      <Card className="border border-border/50 hover:border-gold/50 transition-all duration-300 hover:shadow-md">
+      <Card className={`border transition-all duration-300 ${
+        isRamadanPricingDate && selectedDate
+          ? 'border-gold/50 hover:border-gold shadow-md'
+          : 'border-border/50 hover:border-gold/50 hover:shadow-md'
+      }`}>
         <CardContent className="p-4">
           <div className="flex flex-col gap-4">
             {/* Service Info */}
@@ -118,9 +156,30 @@ function ServiceItem({ service, vehicle, onAddToCart }: ServiceItemProps) {
                 <p className="text-sm text-muted-foreground mt-1">{service.nameAr}</p>
               </div>
               <div className="text-right">
-                <p className="font-display text-xl font-bold text-emerald">
-                  {formatPrice(price)}
-                </p>
+                {loadingPrice || ramadanLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-emerald border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm text-muted-foreground">Loading...</span>
+                  </div>
+                ) : price ? (
+                  <div className="flex flex-col items-end gap-1">
+                    {isRamadanPricingDate && (
+                      <span className="text-xs font-semibold text-gold-dark bg-gold/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span>🌙</span>
+                        Ramadan
+                      </span>
+                    )}
+                    <p className={`font-display text-xl font-bold ${
+                      isRamadanPricingDate ? 'text-gold-dark' : 'text-emerald'
+                    }`}>
+                      {formatPrice(price)}
+                    </p>
+                  </div>
+                ) : selectedDate ? (
+                  <p className="text-sm text-muted-foreground">Price unavailable</p>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Select date</p>
+                )}
               </div>
             </div>
 
@@ -173,8 +232,12 @@ function ServiceItem({ service, vehicle, onAddToCart }: ServiceItemProps) {
               {/* Add to Cart Button */}
               <Button
                 onClick={handleAddToCart}
-                disabled={!selectedDate || !selectedTime || isAdding}
-                className="bg-emerald hover:bg-emerald/90 text-white min-w-[120px]"
+                disabled={!selectedDate || !selectedTime || isAdding || loadingPrice || !price}
+                className={`min-w-[120px] ${
+                  isRamadanPricingDate && selectedDate
+                    ? 'bg-gold hover:bg-gold/90 text-foreground'
+                    : 'bg-emerald hover:bg-emerald/90 text-white'
+                }`}
               >
                 {isAdding ? (
                   <Check className="w-4 h-4" />
@@ -186,6 +249,16 @@ function ServiceItem({ service, vehicle, onAddToCart }: ServiceItemProps) {
                 )}
               </Button>
             </div>
+
+            {/* Ramadan Pricing Info */}
+            {isRamadanPricingDate && selectedDate && (
+              <div className="flex items-start gap-2 p-2 bg-gold/10 border border-gold/30 rounded text-xs">
+                <span className="text-base flex-shrink-0">ℹ️</span>
+                <p className="text-gold-dark">
+                  <strong>Ramadan pricing</strong> is applied for this date. Prices are adjusted for the blessed month.
+                </p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -248,6 +321,14 @@ export default function ServiceSelector({ vehicle, open, onClose }: ServiceSelec
             {vehicle.type} • {vehicle.capacity} Passengers
           </p>
         </DialogHeader>
+
+        {/* Info Banner */}
+        <div className="flex items-start gap-2 p-3 bg-emerald/10 border border-emerald/30 rounded-lg text-sm flex-shrink-0">
+          <span className="text-lg flex-shrink-0">💡</span>
+          <p className="text-emerald-dark">
+            Prices are calculated based on your selected date. Ramadan pricing applies automatically during the blessed month.
+          </p>
+        </div>
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3 py-4 border-b flex-shrink-0">
