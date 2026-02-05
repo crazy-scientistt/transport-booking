@@ -48,7 +48,7 @@ export default function Header({ onCartClick }: HeaderProps) {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-ivory/95 backdrop-blur-md shadow-lg'
+          ? 'bg-ivory shadow-lg backdrop-blur-md'
           : 'bg-transparent'
       }`}
     >
@@ -56,10 +56,12 @@ export default function Header({ onCartClick }: HeaderProps) {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2 group">
-            
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-emerald flex items-center justify-center">
+              <span className="text-white font-display text-lg md:text-xl font-bold">P</span>
+            </div>
             <div className="hidden sm:block">
               <h1 className="font-display text-lg md:text-xl font-semibold text-foreground group-hover:text-emerald transition-colors">
-                Umrah Taxi
+                Premium Transport
               </h1>
               <p className="text-xs text-muted-foreground -mt-1">Sacred Journey Services</p>
             </div>
