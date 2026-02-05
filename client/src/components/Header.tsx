@@ -6,7 +6,7 @@
 */
 
 import { useState, useEffect } from 'react';
-import { ShoppingCart, Menu, Phone } from 'lucide-react'; // Removed unused X import
+import { ShoppingCart, Menu, X, Phone } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -49,18 +49,15 @@ export default function Header({ onCartClick }: HeaderProps) {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? 'bg-ivory/95 backdrop-blur-md shadow-lg'
-          : '' 
+          : 'bg-transparent'
       }`}
-      style={{ backgroundColor: isScrolled ? undefined : 'transparent' }}
     >
       <div className="container">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2 group">
-            {/* Circle Icon removed here */}
             
-            {/* Changed from 'hidden sm:block' to 'block' so text shows on mobile */}
-            <div className="block"> 
+            <div className="hidden sm:block">
               <h1 className="font-display text-lg md:text-xl font-semibold text-foreground group-hover:text-emerald transition-colors">
                 Umrah Taxi
               </h1>
