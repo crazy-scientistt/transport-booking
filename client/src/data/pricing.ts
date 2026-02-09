@@ -309,10 +309,7 @@ yukon: {
   },
 };
 
-// ============================================
-// RAMADAN PRICING (Seasonal - 30% Higher)
-// ============================================
-export const ramadanPricing: Record<string, Record<string, number>> = {
+
  // ============================================
 // RAMADAN PRICING (Seasonal - 30% Higher)
 // ============================================
