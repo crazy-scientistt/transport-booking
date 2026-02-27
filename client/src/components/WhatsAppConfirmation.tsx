@@ -26,7 +26,7 @@ interface WhatsAppConfirmationProps {
   onClose: () => void;
 }
 
-const WHATSAPP_NUMBER = '+966569713833';
+const WHATSAPP_NUMBER = '+966579693883';
 
 export default function WhatsAppConfirmation({ open, onClose }: WhatsAppConfirmationProps) {
   const { items, totalPrice, getItemDetails, clearCart } = useCart();
