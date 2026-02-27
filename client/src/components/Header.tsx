@@ -86,11 +86,11 @@ export default function Header({ onCartClick }: HeaderProps) {
           <div className="flex items-center gap-2 md:gap-4">
             {/* Phone Number - Desktop */}
             <a
-              href="tel:+966569713833"
+              href="tel:+966579693883"
               className="hidden md:flex items-center gap-2 text-sm font-medium text-foreground/80 hover:text-emerald transition-colors"
             >
               <Phone className="w-4 h-4" />
-              <span>+966 569 713 833</span>
+              <span>+966 579 693 883</span>
             </a>
 
             {/* Cart Button */}
@@ -135,11 +135,11 @@ export default function Header({ onCartClick }: HeaderProps) {
                   ))}
                   <hr className="border-border" />
                   <a
-                    href="tel:+966569713833"
+                    href="tel:+966579693883"
                     className="flex items-center gap-2 text-foreground hover:text-emerald transition-colors"
                   >
                     <Phone className="w-5 h-5" />
-                    <span>+966 569 713 833</span>
+                    <span>+966 579 693 883</span>
                   </a>
                 </div>
               </SheetContent>

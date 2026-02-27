@@ -7,7 +7,7 @@
 
 import { Phone, Mail, MapPin, MessageCircle, Clock } from 'lucide-react';
 
-const WHATSAPP_NUMBER = '+966569713833';
+const WHATSAPP_NUMBER = '+966579693883';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
