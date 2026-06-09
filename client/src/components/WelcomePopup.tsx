@@ -4,12 +4,9 @@
   - Shows all vehicles with one service selection
   - Elegant card-based layout
   - Link to main site for multiple bookings
-  
-  SCROLLING FIX: Removed ScrollArea, using simple overflow-y-auto
 */
 
 import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { X, Users, Calendar, Clock, ChevronRight, Star, ArrowRight, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -34,6 +31,42 @@ interface WelcomePopupProps {
   onBrowseMore: () => void;
 }
 
+const TIME_SLOTS = Array.from({ length: 48 }, (_, index) => {
+  const hour = Math.floor(index / 2);
+  const minute = index % 2 === 0 ? '00' : '30';
+  return `${hour.toString().padStart(2, '0')}:${minute}`;
+});
+
+
+function formatDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function isPastDate(date: Date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date < today;
+}
+
+function formatDateForStorage(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function formatTimeDisplay(time: string) {
+  if (!time) return '';
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours, 10);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${minutes} ${ampm}`;
+}
+
 export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePopupProps) {
   const { addItem } = useCart();
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
@@ -53,59 +86,6 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
     return getPrice(selectedVehicle.id, selectedServiceId);
   }, [selectedVehicle, selectedServiceId]);
 
-  const timeSlots = useMemo(() => {
-    const slots = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const h = hour.toString().padStart(2, '0');
-        const m = minute.toString().padStart(2, '0');
-        slots.push(`${h}:${m}`);
-      }
-    }
-    return slots;
-  }, []);
-
-  const formatTimeDisplay = (time: string) => {
-    if (!time) return '';
-    const [hours, minutes] = time.split(':');
-    const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const hour12 = hour % 12 || 12;
-    return `${hour12}:${minutes} ${ampm}`;
-  };
-
-  const handleVehicleSelect = (vehicle: Vehicle) => {
-    setSelectedVehicle(vehicle);
-    setSelectedServiceId('');
-    setStep('service');
-  };
-
-  const handleBookNow = () => {
-    if (!selectedVehicle || !selectedServiceId || !selectedDate || !selectedTime || !selectedPrice) {
-      toast.error('Please complete all selections');
-      return;
-    }
-
-    addItem({
-      vehicleId: selectedVehicle.id,
-      serviceId: selectedServiceId,
-      date: selectedDate.toISOString().split('T')[0],
-      time: selectedTime,
-      price: selectedPrice,
-    });
-
-    toast.success('Added to cart!', {
-      description: 'Your service has been added. You can add more from the main site.',
-    });
-
-    onClose();
-  };
-
-  const handleBrowseMore = () => {
-    onClose();
-    onBrowseMore();
-  };
-
   const resetAndClose = () => {
     setSelectedVehicle(null);
     setSelectedServiceId('');
@@ -115,10 +95,41 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
     onClose();
   };
 
+  const handleVehicleSelect = (vehicle: Vehicle) => {
+    setSelectedVehicle(vehicle);
+    setSelectedServiceId('');
+    setStep('service');
+  };
+
+  const handleBookNow = () => {
+    if (!selectedVehicle || !selectedServiceId || !selectedDate || !selectedTime || selectedPrice === null) {
+      toast.error('Please complete all selections');
+      return;
+    }
+
+    addItem({
+      vehicleId: selectedVehicle.id,
+      serviceId: selectedServiceId,
+      date: formatDateForStorage(selectedDate),
+      time: selectedTime,
+      price: selectedPrice,
+    });
+
+    toast.success('Added to cart!', {
+      description: 'Your service has been added. You can add more from the main site.',
+    });
+
+    resetAndClose();
+  };
+
+  const handleBrowseMore = () => {
+    resetAndClose();
+    onBrowseMore();
+  };
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()}>
-      <DialogContent className="max-w-4xl h-[90vh] p-0 overflow-hidden flex flex-col">
-        {/* Header - Fixed */}
+      <DialogContent className="max-w-4xl h-[90dvh] max-h-[90dvh] p-0 overflow-hidden flex flex-col">
         <div className="relative p-6 pb-4 bg-gradient-to-r from-emerald to-emerald/80 text-white shrink-0">
           <button
             onClick={resetAndClose}
@@ -132,12 +143,12 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
             <span className="text-sm font-medium text-white/90">Quick Booking</span>
           </div>
           <h2 className="font-display text-2xl md:text-3xl font-bold">
-            Welcome to Premium Transport
+            Welcome to Umrah Taxi
           </h2>
           <p className="text-white/80 mt-2">
             Book your transportation service in just a few clicks
           </p>
-          
+
           {bookingPriceSettings.showRamadanNotice && (
             <div className="mt-4 p-3 bg-amber-500/20 border border-amber-300/30 rounded-lg flex items-start gap-2">
               <AlertCircle className="w-5 h-5 text-amber-200 flex-shrink-0 mt-0.5" />
@@ -149,206 +160,190 @@ export default function WelcomePopup({ open, onClose, onBrowseMore }: WelcomePop
           )}
         </div>
 
-        {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">
-          <AnimatePresence mode="wait">
-            {step === 'vehicle' ? (
-              <motion.div
-                key="vehicle"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="p-6"
-              >
-                <h3 className="font-display text-lg font-semibold mb-4">Select Your Vehicle</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4">
-                  {vehicles.map((vehicle) => (
-                    <motion.button
-                      key={vehicle.id}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleVehicleSelect(vehicle)}
-                      className="group relative overflow-hidden rounded-xl border border-border/50 hover:border-gold transition-all text-left"
-                    >
-                      <div className="aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-sand">
-                        <img
-                          src={vehicle.image}
-                          alt={vehicle.name}
-                          className="w-full h-full object-contain object-top sm:object-cover sm:object-center group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
-                      <div className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-semibold text-foreground group-hover:text-emerald transition-colors">
-                              {vehicle.name}
-                            </h4>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                              <Users className="w-4 h-4" />
-                              <span>{vehicle.capacity} Passengers</span>
-                            </div>
-                          </div>
-                          <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-emerald group-hover:translate-x-1 transition-all" />
-                        </div>
-                      </div>
-                      {vehicle.featured && (
-                        <div className="absolute top-3 left-3 px-2 py-1 bg-gold text-foreground text-xs font-semibold rounded">
-                          Popular
-                        </div>
-                      )}
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="service"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="p-6"
-              >
-                {/* Back Button */}
-                <button
-                  onClick={() => setStep('vehicle')}
-                  className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
-                >
-                  <ChevronRight className="w-4 h-4 rotate-180" />
-                  Back to vehicles
-                </button>
-
-                {/* Selected Vehicle */}
-                {selectedVehicle && (
-                  <div className="flex items-center gap-4 p-4 bg-sand rounded-lg mb-6">
-                    <img
-                      src={selectedVehicle.image}
-                      alt={selectedVehicle.name}
-                      className="w-20 h-14 object-cover rounded"
-                    />
-                    <div>
-                      <h4 className="font-semibold">{selectedVehicle.name}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {selectedVehicle.type} • {selectedVehicle.capacity} Passengers
-                      </p>
+          {step === 'vehicle' ? (
+            <div className="p-6">
+              <h3 className="font-display text-lg font-semibold mb-4">Select Your Vehicle</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4">
+                {vehicles.map((vehicle) => (
+                  <button
+                    key={vehicle.id}
+                    onClick={() => handleVehicleSelect(vehicle)}
+                    className="group relative overflow-hidden rounded-xl border border-border/50 hover:border-gold transition-all text-left"
+                  >
+                    <div className="aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-sand">
+                      <img
+                        src={vehicle.image}
+                        alt={vehicle.name}
+                        className="w-full h-full object-contain object-top sm:object-cover sm:object-center group-hover:scale-105 transition-transform duration-500"
+                        width={1000}
+                        height={558}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </div>
-                  </div>
-                )}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-semibold text-foreground group-hover:text-emerald transition-colors">
+                            {vehicle.name}
+                          </h4>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                            <Users className="w-4 h-4" />
+                            <span>{vehicle.capacity} Passengers</span>
+                          </div>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-emerald group-hover:translate-x-1 transition-all" />
+                      </div>
+                    </div>
+                    {vehicle.featured && (
+                      <div className="absolute top-3 left-3 px-2 py-1 bg-gold text-foreground text-xs font-semibold rounded">
+                        Popular
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="p-6">
+              <button
+                onClick={() => setStep('vehicle')}
+                className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors"
+              >
+                <ChevronRight className="w-4 h-4 rotate-180" />
+                Back to vehicles
+              </button>
 
-                {/* Service Selection */}
-                <div className="space-y-4 pb-4">
+              {selectedVehicle && (
+                <div className="flex items-center gap-4 p-4 bg-sand rounded-lg mb-6">
+                  <img
+                    src={selectedVehicle.image}
+                    alt={selectedVehicle.name}
+                    className="w-20 h-14 object-cover rounded"
+                    width={160}
+                    height={112}
+                    loading="lazy"
+                    decoding="async"
+                  />
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Select Service</label>
-                    <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
+                    <h4 className="font-semibold">{selectedVehicle.name}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedVehicle.type} • {selectedVehicle.capacity} Passengers
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-4 pb-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Select Service</label>
+                  <Select value={selectedServiceId} onValueChange={setSelectedServiceId}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Choose a service" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      {availableServices.map((service) => {
+                        const price = selectedVehicle ? getPrice(selectedVehicle.id, service.id) : null;
+                        return (
+                          <SelectItem key={service.id} value={service.id}>
+                            <div className="flex justify-between items-center w-full gap-4">
+                              <span>{service.name}</span>
+                              {price !== null && (
+                                <span className="text-emerald font-medium">{formatPrice(price)}</span>
+                              )}
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Select Date</label>
+                    <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={`w-full justify-start text-left font-normal ${
+                            selectedDate ? 'text-foreground' : 'text-muted-foreground'
+                          }`}
+                        >
+                          <Calendar className="mr-2 h-4 w-4" />
+                          {selectedDate ? format(selectedDate, 'PPP') : 'Pick a date'}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={(date) => {
+                            setSelectedDate(date);
+                            setShowDatePicker(false);
+                          }}
+                          disabled={isPastDate}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Select Time</label>
+                    <Select value={selectedTime} onValueChange={setSelectedTime}>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Choose a service" />
+                        <div className="flex items-center">
+                          <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+                          {selectedTime ? formatTimeDisplay(selectedTime) : 'Pick a time'}
+                        </div>
                       </SelectTrigger>
                       <SelectContent className="max-h-60">
-                        {availableServices.map((service) => {
-                          const price = selectedVehicle ? getPrice(selectedVehicle.id, service.id) : null;
-                          return (
-                            <SelectItem key={service.id} value={service.id}>
-                              <div className="flex justify-between items-center w-full gap-4">
-                                <span>{service.name}</span>
-                                {price && (
-                                  <span className="text-emerald font-medium">{formatPrice(price)}</span>
-                                )}
-                              </div>
-                            </SelectItem>
-                          );
-                        })}
+                        {TIME_SLOTS.map((time) => (
+                          <SelectItem key={time} value={time}>
+                            {formatTimeDisplay(time)}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
-
-                  {/* Date & Time */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Select Date</label>
-                      <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={`w-full justify-start text-left font-normal ${
-                              selectedDate ? 'text-foreground' : 'text-muted-foreground'
-                            }`}
-                          >
-                            <Calendar className="mr-2 h-4 w-4" />
-                            {selectedDate ? format(selectedDate, 'PPP') : 'Pick a date'}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <CalendarComponent
-                            mode="single"
-                            selected={selectedDate}
-                            onSelect={(date) => {
-                              setSelectedDate(date);
-                              setShowDatePicker(false);
-                            }}
-                            disabled={(date) => date < new Date()}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Select Time</label>
-                      <Select value={selectedTime} onValueChange={setSelectedTime}>
-                        <SelectTrigger className="w-full">
-                          <div className="flex items-center">
-                            <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                            {selectedTime ? formatTimeDisplay(selectedTime) : 'Pick a time'}
-                          </div>
-                        </SelectTrigger>
-                        <SelectContent className="max-h-60">
-                          {timeSlots.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {formatTimeDisplay(time)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Price Display */}
-                  {selectedPrice && (
-                    <div className="flex justify-between items-center p-4 bg-emerald/10 rounded-lg">
-                      <span className="font-medium">Service Price</span>
-                      <span className="font-display text-2xl font-bold text-emerald">
-                        {formatPrice(selectedPrice)}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Actions */}
-                  <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                    <Button
-                      onClick={handleBookNow}
-                      disabled={!selectedServiceId || !selectedDate || !selectedTime}
-                      className="flex-1 bg-emerald hover:bg-emerald/90 text-white font-semibold py-6"
-                    >
-                      Add to Cart
-                    </Button>
-                  </div>
-
-                  {/* Browse More Link */}
-                  <div className="text-center pt-4 border-t">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Need to book multiple services?
-                    </p>
-                    <button
-                      onClick={handleBrowseMore}
-                      className="inline-flex items-center gap-1 text-emerald hover:text-emerald/80 font-medium transition-colors"
-                    >
-                      Browse all services on our website
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+
+                {selectedPrice !== null && (
+                  <div className="flex justify-between items-center p-4 bg-emerald/10 rounded-lg">
+                    <span className="font-medium">Service Price</span>
+                    <span className="font-display text-2xl font-bold text-emerald">
+                      {formatPrice(selectedPrice)}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                  <Button
+                    onClick={handleBookNow}
+                    disabled={!selectedServiceId || !selectedDate || !selectedTime}
+                    className="flex-1 bg-emerald hover:bg-emerald/90 text-white font-semibold py-6"
+                  >
+                    Add to Cart
+                  </Button>
+                </div>
+
+                <div className="text-center pt-4 border-t">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Need to book multiple services?
+                  </p>
+                  <button
+                    onClick={handleBrowseMore}
+                    className="inline-flex items-center gap-1 text-emerald hover:text-emerald/80 font-medium transition-colors"
+                  >
+                    Browse all services on our website
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

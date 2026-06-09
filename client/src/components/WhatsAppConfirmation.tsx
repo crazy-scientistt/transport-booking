@@ -5,8 +5,7 @@
   - Gold accent on confirm button
 */
 
-import { motion } from 'framer-motion';
-import { MessageCircle, Check, Phone, ExternalLink } from 'lucide-react';
+import { MessageCircle, Phone, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -19,14 +18,12 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/contexts/CartContext';
-import { formatPrice } from '@/data/pricing';
+import { buildWhatsAppUrl, contactSettings, formatPrice } from '@/data/pricing';
 
 interface WhatsAppConfirmationProps {
   open: boolean;
   onClose: () => void;
 }
-
-const WHATSAPP_NUMBER = '+966579693883';
 
 export default function WhatsAppConfirmation({ open, onClose }: WhatsAppConfirmationProps) {
   const { items, totalPrice, getItemDetails, clearCart } = useCart();
@@ -48,13 +45,11 @@ export default function WhatsAppConfirmation({ open, onClose }: WhatsAppConfirma
     message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
     message += `Please confirm my booking. Thank you!`;
 
-    return encodeURIComponent(message);
+    return message;
   };
 
   const handleConfirm = () => {
-    const message = generateWhatsAppMessage();
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${message}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(buildWhatsAppUrl(generateWhatsAppMessage()), '_blank', 'noopener,noreferrer');
     clearCart();
     onClose();
   };
@@ -72,20 +67,16 @@ export default function WhatsAppConfirmation({ open, onClose }: WhatsAppConfirma
           </DialogDescription>
         </DialogHeader>
 
-        {/* Booking Summary */}
         <ScrollArea className="max-h-[40vh]">
           <div className="space-y-4 py-4">
-            {items.map((item, index) => {
+            {items.map((item) => {
               const details = getItemDetails(item);
               return (
-                <motion.div
+                <div
                   key={item.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
                   className="p-4 bg-sand rounded-lg"
                 >
-                  <div className="flex justify-between items-start">
+                  <div className="flex justify-between items-start gap-3">
                     <div>
                       <h4 className="font-semibold text-foreground">{details.serviceName}</h4>
                       <p className="text-sm text-muted-foreground">{details.vehicleName}</p>
@@ -95,11 +86,11 @@ export default function WhatsAppConfirmation({ open, onClose }: WhatsAppConfirma
                         <span>{details.formattedTime}</span>
                       </div>
                     </div>
-                    <p className="font-display font-bold text-emerald">
+                    <p className="font-display font-bold text-emerald whitespace-nowrap">
                       {details.formattedPrice}
                     </p>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -107,7 +98,6 @@ export default function WhatsAppConfirmation({ open, onClose }: WhatsAppConfirma
 
         <Separator />
 
-        {/* Total */}
         <div className="flex justify-between items-center py-2">
           <span className="text-lg font-semibold">Total Amount</span>
           <span className="font-display text-2xl font-bold text-emerald">
@@ -115,12 +105,11 @@ export default function WhatsAppConfirmation({ open, onClose }: WhatsAppConfirma
           </span>
         </div>
 
-        {/* WhatsApp Info */}
         <div className="flex items-center gap-3 p-3 bg-emerald/10 rounded-lg">
           <Phone className="w-5 h-5 text-emerald" />
           <div>
             <p className="text-sm font-medium">WhatsApp Number</p>
-            <p className="text-sm text-muted-foreground">{WHATSAPP_NUMBER}</p>
+            <p className="text-sm text-muted-foreground">{contactSettings.whatsappNumber}</p>
           </div>
         </div>
 

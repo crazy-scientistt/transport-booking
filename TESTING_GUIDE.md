@@ -1,63 +1,49 @@
 # Testing Guide
 
-## Test normal pricing
+## Price test
 
-1. Open `client/src/data/pricing.ts`.
-2. Set:
+1. Open the site.
+2. Click `Book Now` or select a vehicle from the fleet.
+3. Choose a route.
+4. Confirm that the displayed price matches `standardPricing` in:
 
-```ts
-useRamadanPricing: false,
-showRamadanNotice: false,
+```txt
+client/src/data/pricing.ts
 ```
 
-3. Run the app.
-4. Select a vehicle and service.
-5. Confirm that the displayed price matches the `standardPricing` section.
+## Ramadan pricing test
 
-## Test Ramadan pricing
-
-1. Open `client/src/data/pricing.ts`.
-2. Set:
+1. Set this in `client/src/data/pricing.ts`:
 
 ```ts
 useRamadanPricing: true,
 ```
 
-3. Run the app.
-4. Select a vehicle and service.
-5. Confirm that the displayed price matches the `ramadanPricing` section.
+2. Open the site again.
+3. Check the same route.
+4. The price should be normal price × `ramadanPriceMultiplier` unless overridden in `ramadanPricingOverrides`.
 
-## Test Ramadan notice
+## Ramadan notice test
 
-To show the notice:
+1. Set:
 
 ```ts
 showRamadanNotice: true,
 ```
 
-To hide the notice:
+2. Open the quick booking popup.
+3. Confirm that the notice title/message match:
 
 ```ts
-showRamadanNotice: false,
+ramadanNoticeTitle
+ramadanNoticeMessage
 ```
 
-The notice setting does not control prices. Pricing is controlled only by `useRamadanPricing`.
+## Contact number test
 
-## Test notice wording
+Change `contactSettings` in `pricing.ts`, then check:
 
-Change:
-
-```ts
-ramadanNoticeTitle: 'Ramadan Notice:',
-ramadanNoticeMessage: 'All prices are 30% higher fare from 18 to 30 Ramadan',
-```
-
-Refresh the app and open the welcome popup.
-
-## Clear cart while testing
-
-Old cart items keep the price from the moment they were added. Clear the browser localStorage key before retesting prices:
-
-```txt
-transport-booking-cart
-```
+- Header phone link
+- Footer phone/WhatsApp link
+- Floating WhatsApp button
+- Checkout WhatsApp modal

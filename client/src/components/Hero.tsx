@@ -3,10 +3,8 @@
   - Full-bleed hero with dramatic imagery
   - Warm golden overlay
   - Elegant typography with Playfair Display
-  - Flowing animation entrance
 */
 
-import { motion } from 'framer-motion';
 import { ChevronDown, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { heroBannerImage } from '@/data/pricing';
@@ -25,61 +23,39 @@ export default function Hero({ onBookNow }: HeroProps) {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
       <div className="absolute inset-0">
         <img
           src={heroBannerImage}
           alt="Luxury transportation in Saudi Arabia"
           className="w-full h-full object-cover"
+          width={1920}
+          height={1072}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 container">
         <div className="max-w-3xl">
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/20 backdrop-blur-sm border border-gold/30 mb-6"
-          >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/20 backdrop-blur-sm border border-gold/30 mb-6 animate-fade-in-up">
             <Star className="w-4 h-4 text-gold fill-gold" />
             <span className="text-sm font-medium text-white/90">Premium Transportation Services</span>
-          </motion.div>
+          </div>
 
-          {/* Main Heading */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6"
-          >
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6 animate-fade-in-up animation-delay-100">
             Your Sacred Journey{' '}
             <span className="text-gold">Begins Here</span>
-          </motion.h1>
+          </h1>
 
-          {/* Subheading */}
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="font-body text-lg md:text-xl text-white/80 mb-8 max-w-2xl"
-          >
-            Experience premium transportation between Jeddah, Makkah, and Madina. 
+          <p className="font-body text-lg md:text-xl text-white/80 mb-8 max-w-2xl animate-fade-in-up animation-delay-200">
+            Experience premium transportation between Jeddah, Makkah, and Madinah.
             Professional drivers, comfortable vehicles, and seamless booking for pilgrims and travelers.
-          </motion.p>
+          </p>
 
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-4"
-          >
+          <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up animation-delay-300">
             <Button
               size="lg"
               onClick={onBookNow}
@@ -95,15 +71,9 @@ export default function Hero({ onBookNow }: HeroProps) {
             >
               View Our Fleet
             </Button>
-          </motion.div>
+          </div>
 
-          {/* Trust Indicators */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-wrap items-center gap-6 mt-12 text-white/70"
-          >
+          <div className="flex flex-wrap items-center gap-6 mt-12 text-white/70 animate-fade-in animation-delay-500">
             <div className="flex items-center gap-2">
               <div className="flex -space-x-1">
                 {[...Array(5)].map((_, i) => (
@@ -116,27 +86,18 @@ export default function Hero({ onBookNow }: HeroProps) {
             <span className="text-sm">24/7 Availability</span>
             <div className="w-px h-4 bg-white/30" />
             <span className="text-sm">Professional Drivers</span>
-          </motion.div>
+          </div>
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.8 }}
+      <button
         onClick={scrollToVehicles}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 hover:text-white transition-colors"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 hover:text-white transition-colors animate-bounce-subtle"
+        aria-label="Scroll to vehicles"
       >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-        >
-          <ChevronDown className="w-8 h-8" />
-        </motion.div>
-      </motion.button>
+        <ChevronDown className="w-8 h-8" />
+      </button>
 
-      {/* Decorative Elements */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-ivory to-transparent" />
     </section>
   );

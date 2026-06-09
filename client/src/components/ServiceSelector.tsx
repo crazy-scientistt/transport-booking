@@ -1,14 +1,12 @@
 /*
   DESIGN: Desert Oasis Luxury
-  - Modal/drawer for service selection
+  - Modal for service selection
   - Each service has its own date/time picker
   - Gold accents on selected items
-  - Smooth animations
 */
 
 import { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Clock, Plus, Check, Search, Filter, ChevronDown } from 'lucide-react';
+import { Calendar, Clock, Plus, Check, Search, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -25,7 +23,6 @@ import {
   getAvailableServicesForVehicle,
   getPrice,
   formatPrice,
-  getServicesByCategory,
 } from '@/data/pricing';
 import { format } from 'date-fns';
 
@@ -41,6 +38,42 @@ interface ServiceItemProps {
   onAddToCart: (serviceId: string, date: string, time: string, price: number) => void;
 }
 
+const TIME_SLOTS = Array.from({ length: 48 }, (_, index) => {
+  const hour = Math.floor(index / 2);
+  const minute = index % 2 === 0 ? '00' : '30';
+  return `${hour.toString().padStart(2, '0')}:${minute}`;
+});
+
+
+function formatDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function isPastDate(date: Date) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date < today;
+}
+
+function formatDateForStorage(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function formatTimeDisplay(time: string) {
+  if (!time) return '';
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours, 10);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${minutes} ${ampm}`;
+}
+
 function ServiceItem({ service, vehicle, onAddToCart }: ServiceItemProps) {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState<string>('');
@@ -49,38 +82,17 @@ function ServiceItem({ service, vehicle, onAddToCart }: ServiceItemProps) {
 
   const price = getPrice(vehicle.id, service.id);
 
-  const timeSlots = useMemo(() => {
-    const slots = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const h = hour.toString().padStart(2, '0');
-        const m = minute.toString().padStart(2, '0');
-        slots.push(`${h}:${m}`);
-      }
-    }
-    return slots;
-  }, []);
-
-  const formatTimeDisplay = (time: string) => {
-    if (!time) return '';
-    const [hours, minutes] = time.split(':');
-    const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const hour12 = hour % 12 || 12;
-    return `${hour12}:${minutes} ${ampm}`;
-  };
-
   const handleAddToCart = () => {
-    if (!selectedDate || !selectedTime || !price) {
+    if (!selectedDate || !selectedTime || price === null) {
       toast.error('Please select both date and time');
       return;
     }
 
     setIsAdding(true);
-    setTimeout(() => {
+    window.setTimeout(() => {
       onAddToCart(
         service.id,
-        selectedDate.toISOString().split('T')[0],
+        formatDateForStorage(selectedDate),
         selectedTime,
         price
       );
@@ -90,106 +102,95 @@ function ServiceItem({ service, vehicle, onAddToCart }: ServiceItemProps) {
       toast.success('Added to cart!', {
         description: `${service.name} with ${vehicle.name}`,
       });
-    }, 300);
+    }, 150);
   };
 
-  if (!price) return null;
+  if (price === null) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="group"
-    >
-      <Card className="border border-border/50 hover:border-gold/50 transition-all duration-300 hover:shadow-md">
-        <CardContent className="p-4">
-          <div className="flex flex-col gap-4">
-            {/* Service Info */}
-            <div className="flex justify-between items-start">
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-semibold text-foreground">{service.name}</h4>
-                  {service.popular && (
-                    <span className="px-2 py-0.5 text-xs font-medium bg-gold/20 text-gold-dark rounded">
-                      Popular
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground mt-1">{service.nameAr}</p>
-              </div>
-              <div className="text-right">
-                <p className="font-display text-xl font-bold text-emerald">
-                  {formatPrice(price)}
-                </p>
-              </div>
-            </div>
-
-            {/* Date & Time Selection */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              {/* Date Picker */}
-              <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={`flex-1 justify-start text-left font-normal ${
-                      selectedDate ? 'text-foreground' : 'text-muted-foreground'
-                    }`}
-                  >
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {selectedDate ? format(selectedDate, 'PPP') : 'Select date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarComponent
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={(date) => {
-                      setSelectedDate(date);
-                      setShowDatePicker(false);
-                    }}
-                    disabled={(date) => date < new Date()}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-
-              {/* Time Picker */}
-              <Select value={selectedTime} onValueChange={setSelectedTime}>
-                <SelectTrigger className="flex-1">
-                  <div className="flex items-center">
-                    <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                    {selectedTime ? formatTimeDisplay(selectedTime) : 'Select time'}
-                  </div>
-                </SelectTrigger>
-                <SelectContent className="max-h-60">
-                  {timeSlots.map((time) => (
-                    <SelectItem key={time} value={time}>
-                      {formatTimeDisplay(time)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              {/* Add to Cart Button */}
-              <Button
-                onClick={handleAddToCart}
-                disabled={!selectedDate || !selectedTime || isAdding}
-                className="bg-emerald hover:bg-emerald/90 text-white min-w-[120px]"
-              >
-                {isAdding ? (
-                  <Check className="w-4 h-4" />
-                ) : (
-                  <>
-                    <Plus className="w-4 h-4 mr-1" />
-                    Add to Cart
-                  </>
+    <Card className="border border-border/50 hover:border-gold/50 transition-all duration-300 hover:shadow-md">
+      <CardContent className="p-4">
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-start gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <h4 className="font-semibold text-foreground">{service.name}</h4>
+                {service.popular && (
+                  <span className="px-2 py-0.5 text-xs font-medium bg-gold/20 text-gold-dark rounded">
+                    Popular
+                  </span>
                 )}
-              </Button>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">{service.nameAr}</p>
+            </div>
+            <div className="text-right">
+              <p className="font-display text-xl font-bold text-emerald whitespace-nowrap">
+                {formatPrice(price)}
+              </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
-    </motion.div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={`flex-1 justify-start text-left font-normal ${
+                    selectedDate ? 'text-foreground' : 'text-muted-foreground'
+                  }`}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {selectedDate ? format(selectedDate, 'PPP') : 'Select date'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => {
+                    setSelectedDate(date);
+                    setShowDatePicker(false);
+                  }}
+                  disabled={isPastDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+
+            <Select value={selectedTime} onValueChange={setSelectedTime}>
+              <SelectTrigger className="flex-1">
+                <div className="flex items-center">
+                  <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+                  {selectedTime ? formatTimeDisplay(selectedTime) : 'Select time'}
+                </div>
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {TIME_SLOTS.map((time) => (
+                  <SelectItem key={time} value={time}>
+                    {formatTimeDisplay(time)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Button
+              onClick={handleAddToCart}
+              disabled={!selectedDate || !selectedTime || isAdding}
+              className="bg-emerald hover:bg-emerald/90 text-white min-w-[120px]"
+            >
+              {isAdding ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <>
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add to Cart
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -206,12 +207,10 @@ export default function ServiceSelector({ vehicle, open, onClose }: ServiceSelec
   const filteredServices = useMemo(() => {
     let services = availableServices;
 
-    // Filter by category
     if (selectedCategory !== 'all') {
       services = services.filter((s) => s.category === selectedCategory);
     }
 
-    // Filter by search
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       services = services.filter(
@@ -249,9 +248,7 @@ export default function ServiceSelector({ vehicle, open, onClose }: ServiceSelec
           </p>
         </DialogHeader>
 
-        {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3 py-4 border-b flex-shrink-0">
-          {/* Search */}
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
@@ -262,7 +259,6 @@ export default function ServiceSelector({ vehicle, open, onClose }: ServiceSelec
             />
           </div>
 
-          {/* Category Filter */}
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-full sm:w-[200px]">
               <Filter className="w-4 h-4 mr-2" />
@@ -279,31 +275,23 @@ export default function ServiceSelector({ vehicle, open, onClose }: ServiceSelec
           </Select>
         </div>
 
-        {/* Services List */}
         <div className="flex-1 overflow-y-auto py-4 space-y-3">
-          <AnimatePresence mode="popLayout">
-            {filteredServices.length > 0 ? (
-              filteredServices.map((service) => (
-                <ServiceItem
-                  key={service.id}
-                  service={service}
-                  vehicle={vehicle}
-                  onAddToCart={handleAddToCart}
-                />
-              ))
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-12 text-muted-foreground"
-              >
-                <p>No services found matching your criteria.</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {filteredServices.length > 0 ? (
+            filteredServices.map((service) => (
+              <ServiceItem
+                key={service.id}
+                service={service}
+                vehicle={vehicle}
+                onAddToCart={handleAddToCart}
+              />
+            ))
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <p>No services found matching your criteria.</p>
+            </div>
+          )}
         </div>
 
-        {/* Footer */}
         <div className="flex-shrink-0 pt-4 border-t">
           <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
             Done

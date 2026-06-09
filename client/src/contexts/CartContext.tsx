@@ -31,21 +31,27 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const CART_STORAGE_KEY = 'transport-booking-cart';
 
+function getCurrentItemPrice(item: CartItem) {
+  return getPrice(item.vehicleId, item.serviceId) ?? item.price;
+}
+
+function parseStoredCart(value: string | null): CartItem[] {
+  if (!value) return [];
+
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => {
     if (typeof window === 'undefined') return [];
-    const stored = localStorage.getItem(CART_STORAGE_KEY);
-    if (stored) {
-      try {
-        return JSON.parse(stored);
-      } catch {
-        return [];
-      }
-    }
-    return [];
+    return parseStoredCart(localStorage.getItem(CART_STORAGE_KEY));
   });
 
-  // Persist to localStorage
   useEffect(() => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
   }, [items]);
@@ -67,14 +73,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
   };
 
-  const totalPrice = items.reduce((sum, item) => sum + item.price, 0);
+  const totalPrice = items.reduce((sum, item) => sum + getCurrentItemPrice(item), 0);
   const itemCount = items.length;
 
   const getItemDetails = (item: CartItem) => {
     const vehicle = getVehicleById(item.vehicleId);
     const service = getServiceById(item.serviceId);
-    
-    // Format date
+
     const dateObj = new Date(item.date);
     const formattedDate = dateObj.toLocaleDateString('en-US', {
       weekday: 'short',
@@ -82,18 +87,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
       month: 'short',
       day: 'numeric',
     });
-    
-    // Format time
+
     const [hours, minutes] = item.time.split(':');
-    const hour = parseInt(hours);
+    const hour = parseInt(hours, 10);
     const ampm = hour >= 12 ? 'PM' : 'AM';
     const hour12 = hour % 12 || 12;
     const formattedTime = `${hour12}:${minutes} ${ampm}`;
-    
+    const currentPrice = getCurrentItemPrice(item);
+
     return {
       vehicleName: vehicle?.name || 'Unknown Vehicle',
       serviceName: service?.name || 'Unknown Service',
-      formattedPrice: formatPrice(item.price),
+      formattedPrice: formatPrice(currentPrice),
       formattedDate,
       formattedTime,
     };

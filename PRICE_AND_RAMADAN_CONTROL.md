@@ -1,91 +1,98 @@
-# Price and Ramadan Control
+# Price, Ramadan, Contact, and Popup Control
 
-All normal pricing, Ramadan pricing, and the Ramadan popup notice are controlled from one file:
+Edit one file:
 
 ```txt
 client/src/data/pricing.ts
 ```
 
-## Turn Ramadan pricing on or off
+## Ramadan pricing on/off
 
-Open `client/src/data/pricing.ts` and edit this value:
+At the top of `pricing.ts`:
 
 ```ts
 useRamadanPricing: false,
 ```
 
-Use `false` for normal prices. Use `true` for Ramadan prices.
+- `false` = use normal prices from `standardPricing`
+- `true` = use Ramadan prices
 
-## Turn Ramadan notice on or off
-
-In the same file, edit this value:
+## Ramadan notice on/off
 
 ```ts
 showRamadanNotice: false,
 ```
 
-Use `false` to hide the notice. Use `true` to show the notice.
+- `false` = hide the Ramadan notice
+- `true` = show the Ramadan notice in the quick booking popup
 
-This is separate from pricing. You can show the notice while using normal prices, or use Ramadan prices while hiding the notice.
-
-## Change Ramadan notice wording
-
-In the same file, edit these lines:
+## Ramadan notice wording
 
 ```ts
 ramadanNoticeTitle: 'Ramadan Notice:',
 ramadanNoticeMessage: 'All prices are 30% higher fare from 18 to 30 Ramadan',
 ```
 
-## Change normal prices
+## Ramadan price amount
 
-In the same file, edit the `standardPricing` section.
+Ramadan pricing now stays synced with normal pricing automatically.
+
+```ts
+ramadanPriceMultiplier: 1.3,
+```
+
+- `1.3` = 30% higher
+- `1.2` = 20% higher
+- `1.5` = 50% higher
+
+For one-off Ramadan price exceptions, add them inside:
+
+```ts
+ramadanPricingOverrides
+```
+
+## Normal prices
+
+Edit:
+
+```ts
+export const standardPricing
+```
 
 Example:
 
 ```ts
 camry: {
-  'jeddah-airport-makkah': 250,
+  'jeddah-airport-makkah': 220,
 }
 ```
 
-Change the number only:
+## Contact number
+
+Edit:
 
 ```ts
-camry: {
-  'jeddah-airport-makkah': 300,
-}
+export const contactSettings = {
+  phoneNumber: '+966579693883',
+  whatsappNumber: '+966579693883',
+};
 ```
 
-## Change Ramadan prices
+This updates the header, footer, floating WhatsApp button, and checkout WhatsApp link.
 
-In the same file, edit the `ramadanPricing` section.
-
-These prices are used only when:
+## First-visit quick booking popup
 
 ```ts
-useRamadanPricing: true,
+showWelcomePopupOnFirstVisit: false,
 ```
 
-## Vehicle IDs
+- `false` = popup opens only when the customer clicks Book Now
+- `true` = popup also opens automatically on first visit
 
-```txt
-camry
-staria
-h1
-hiace
-yukon
-coaster
-```
+## Important route mapping
 
-## After changing prices
-
-Existing items already added to the browser cart may still show old prices because the cart stores the price at the time it is added.
-
-While testing, clear browser localStorage key:
-
-```txt
-transport-booking-cart
-```
-
-Then rebuild and redeploy.
+- `jeddah-airport-makkah` = Jeddah Airport to Makkah Hotel
+- `makkah-hotel-jeddah-airport` = Makkah Hotel to Jeddah Airport
+- `jeddah-airport-madina` = Jeddah Airport to Madinah Hotel
+- `madina-jeddah-airport` = Madinah Hotel to Jeddah Airport
+- `coaster` = Coaster column from the shared rate card

@@ -1,5 +1,6 @@
 // ============================================================
-// MAIN FILE FOR RAMADAN SETTINGS, NOTICE TEXT, AND ALL PRICES
+// MAIN FILE FOR RAMADAN SETTINGS, NOTICE TEXT, CONTACT, ROUTES,
+// VEHICLES, AND ALL PRICES
 // ============================================================
 // Edit this file when you want to change pricing or Ramadan behavior.
 //
@@ -7,8 +8,9 @@
 // - Ramadan pricing ON/OFF: bookingPriceSettings.useRamadanPricing
 // - Ramadan notice ON/OFF: bookingPriceSettings.showRamadanNotice
 // - Ramadan notice wording: bookingPriceSettings.ramadanNoticeTitle/message
+// - Ramadan price increase: bookingPriceSettings.ramadanPriceMultiplier
 // - Normal prices: standardPricing section below
-// - Ramadan prices: ramadanPricing section below
+// - Contact number: contactSettings.whatsappNumber / contactSettings.phoneNumber
 //
 // Important: pricing and notice are separate.
 // You can show the Ramadan notice while using normal prices, or use Ramadan
@@ -19,10 +21,13 @@ export const bookingPriceSettings: {
   showRamadanNotice: boolean;
   ramadanNoticeTitle: string;
   ramadanNoticeMessage: string;
+  ramadanPriceMultiplier: number;
   currencyLabel: string;
+  showWelcomePopupOnFirstVisit: boolean;
+  welcomePopupDelayMs: number;
 } = {
-  // true  = use the ramadanPricing list below
-  // false = use the standardPricing list below
+  // true  = use Ramadan prices
+  // false = use normal prices
   useRamadanPricing: false,
 
   // true  = show the Ramadan notice in the welcome popup
@@ -33,12 +38,31 @@ export const bookingPriceSettings: {
   ramadanNoticeTitle: 'Ramadan Notice:',
   ramadanNoticeMessage: 'All prices are 30% higher fare from 18 to 30 Ramadan',
 
+  // Ramadan prices are generated from standardPricing using this multiplier.
+  // 1.3 means 30% higher. Change to 1.2 for 20% higher, etc.
+  ramadanPriceMultiplier: 1.3,
+
   // Change this only if you want another currency label in the UI.
   currencyLabel: 'SAR',
+
+  // Auto popup hurts loading and conversion on many sites.
+  // Set true if you still want the quick booking popup to open on first visit.
+  showWelcomePopupOnFirstVisit: false,
+  welcomePopupDelayMs: 1500,
+};
+
+// Contact details used across header, footer, floating WhatsApp, and booking checkout.
+// Keep these synced here instead of editing multiple components.
+export const contactSettings = {
+  phoneNumber: '+966579693883',
+  whatsappNumber: '+966579693883',
+  floatingWhatsAppMessage: 'Hello, I would like to inquire about your transportation services.',
 };
 
 // Backwards-compatible export for any old code/imports.
 export const USE_RAMADAN_PRICING = bookingPriceSettings.useRamadanPricing;
+
+export type PricingTable = Record<string, Record<string, number>>;
 
 // ============================================
 // VEHICLE TYPES
@@ -66,7 +90,7 @@ export const vehicles: Vehicle[] = [
     capacity: 4,
     description: 'Comfortable sedan perfect for small families or couples. Smooth ride with premium comfort.',
     descriptionAr: 'سيارة سيدان مريحة مثالية للعائلات الصغيرة أو الأزواج. رحلة سلسة مع راحة فاخرة.',
-    image: '/assets/vehicles/camry.jpg',
+    image: '/assets/vehicles/camry.webp',
     featured: true,
   },
   {
@@ -78,7 +102,7 @@ export const vehicles: Vehicle[] = [
     capacity: 7,
     description: 'Modern luxury van with futuristic design. Spacious interior for family groups.',
     descriptionAr: 'فان فاخر حديث بتصميم مستقبلي. مساحة داخلية واسعة للمجموعات العائلية.',
-    image: '/assets/vehicles/staria.jpg',
+    image: '/assets/vehicles/staria.webp',
   },
   {
     id: 'h1',
@@ -89,7 +113,7 @@ export const vehicles: Vehicle[] = [
     capacity: 10,
     description: 'Versatile passenger van ideal for medium-sized groups. Reliable and comfortable.',
     descriptionAr: 'فان ركاب متعدد الاستخدامات مثالي للمجموعات المتوسطة. موثوق ومريح.',
-    image: '/assets/vehicles/h1.jpg',
+    image: '/assets/vehicles/h1.webp',
     featured: true,
   },
   {
@@ -101,7 +125,7 @@ export const vehicles: Vehicle[] = [
     capacity: 12,
     description: 'Spacious commuter van perfect for larger groups. Excellent for pilgrim groups.',
     descriptionAr: 'فان ركاب واسع مثالي للمجموعات الكبيرة. ممتاز لمجموعات الحجاج.',
-    image: '/assets/vehicles/hiace.jpg',
+    image: '/assets/vehicles/hiace.webp',
   },
   {
     id: 'yukon',
@@ -112,7 +136,7 @@ export const vehicles: Vehicle[] = [
     capacity: 7,
     description: 'Premium luxury SUV for VIP travel. Ultimate comfort and prestige.',
     descriptionAr: 'سيارة دفع رباعي فاخرة للسفر VIP. راحة ومكانة فائقة.',
-    image: '/assets/vehicles/yukon.jpg',
+    image: '/assets/vehicles/yukon.webp',
     featured: true,
   },
   {
@@ -124,7 +148,7 @@ export const vehicles: Vehicle[] = [
     capacity: 24,
     description: 'Full-size bus for large pilgrim groups. Maximum capacity with comfort.',
     descriptionAr: 'باص كامل الحجم لمجموعات الحجاج الكبيرة. أقصى سعة مع الراحة.',
-    image: '/assets/vehicles/coaster.jpg',
+    image: '/assets/vehicles/coaster.webp',
   },
 ];
 
@@ -163,33 +187,34 @@ export const services: Service[] = [
   { id: 'jeddah-airport-makkah', name: 'Jeddah Airport to Makkah Hotel', nameAr: 'مطار جدة إلى فندق مكة', category: 'airport', popular: true },
   { id: 'jeddah-airport-jeddah', name: 'Jeddah Airport to Jeddah Hotel', nameAr: 'مطار جدة إلى فندق جدة', category: 'airport' },
   { id: 'jeddah-hotel-airport', name: 'Jeddah Hotel to Jeddah Airport', nameAr: 'فندق جدة إلى مطار جدة', category: 'airport' },
-  { id: 'jeddah-airport-madina', name: 'Jeddah Airport to Madina Hotel', nameAr: 'مطار جدة إلى فندق المدينة', category: 'airport' },
-  { id: 'madina-airport-hotel', name: 'Madina Airport to Madina Hotel', nameAr: 'مطار المدينة إلى فندق المدينة', category: 'airport' },
-  { id: 'madina-hotel-airport', name: 'Madina Hotel to Madina Airport', nameAr: 'فندق المدينة إلى مطار المدينة', category: 'airport' },
+  { id: 'jeddah-airport-madina', name: 'Jeddah Airport to Madinah Hotel', nameAr: 'مطار جدة إلى فندق المدينة', category: 'airport', popular: true },
+  { id: 'madina-jeddah-airport', name: 'Madinah Hotel to Jeddah Airport', nameAr: 'فندق المدينة إلى مطار جدة', category: 'airport' },
+  { id: 'madina-airport-hotel', name: 'Madinah Airport to Madinah Hotel', nameAr: 'مطار المدينة إلى فندق المدينة', category: 'airport' },
+  { id: 'madina-hotel-airport', name: 'Madinah Hotel to Madinah Airport', nameAr: 'فندق المدينة إلى مطار المدينة', category: 'airport' },
   { id: 'makkah-hotel-jeddah-airport', name: 'Makkah Hotel to Jeddah Airport', nameAr: 'فندق مكة إلى مطار جدة', category: 'airport', popular: true },
-  
+
   // Intercity Travel
-  { id: 'makkah-madina', name: 'Makkah Hotel to Madina Hotel', nameAr: 'فندق مكة إلى فندق المدينة', category: 'intercity', popular: true },
-  { id: 'madina-makkah', name: 'Madina Hotel to Makkah Hotel', nameAr: 'فندق المدينة إلى فندق مكة', category: 'intercity', popular: true },
+  { id: 'makkah-madina', name: 'Makkah Hotel to Madinah Hotel', nameAr: 'فندق مكة إلى فندق المدينة', category: 'intercity', popular: true },
+  { id: 'madina-makkah', name: 'Madinah Hotel to Makkah Hotel', nameAr: 'فندق المدينة إلى فندق مكة', category: 'intercity', popular: true },
   { id: 'jeddah-taif', name: 'Jeddah to Taif and Return', nameAr: 'جدة إلى الطائف والعودة', category: 'intercity' },
-  { id: 'makkah-taif', name: 'Makkah to Taif and Return', nameAr: 'مكة إلى الطائف والعودة', category: 'intercity' },
-  
+  { id: 'makkah-taif', name: 'Makkah to Taif Ziyarat and Return', nameAr: 'مكة إلى الطائف زيارة والعودة', category: 'intercity' },
+
   // Ziyarat Tours
-  { id: 'makkah-ziyarat', name: 'Makkah Ziyarat', nameAr: 'زيارة مكة', category: 'ziyarat', popular: true },
-  { id: 'madina-ziyarat', name: 'Madina Ziyarat', nameAr: 'زيارة المدينة', category: 'ziyarat', popular: true },
-  { id: 'madina-ziyarat-wadiya', name: 'Madina Ziarat and Wadiya Jin', nameAr: 'زيارة المدينة ووادي الجن', category: 'ziyarat' },
+  { id: 'makkah-ziyarat', name: 'Makkah Ziyarat - 3 Hours', nameAr: 'زيارة مكة - ٣ ساعات', category: 'ziyarat', popular: true },
+  { id: 'madina-ziyarat', name: 'Madinah Ziyarat - 3 Hours', nameAr: 'زيارة المدينة - ٣ ساعات', category: 'ziyarat', popular: true },
+  { id: 'madina-ziyarat-wadiya', name: 'Madinah Ziyarat and Wadiya Jin', nameAr: 'زيارة المدينة ووادي الجن', category: 'ziyarat' },
   { id: 'jabal-khandamah', name: 'Jabal Khandamah', nameAr: 'جبل خندمة', category: 'ziyarat' },
-  
+
   // Train Station
-  { id: 'makkah-train-station', name: 'Makkah hotel to train station', nameAr: 'فندق مكة إلى محطة القطار', category: 'train' },
-  { id: 'train-station-makkah', name: 'Makkah train station to Makkah Hotel', nameAr: 'محطة قطار مكة إلى فندق مكة', category: 'train' },
-  { id: 'madina-train-hotel', name: 'Medina Train station to Medina hotel', nameAr: 'محطة قطار المدينة إلى فندق المدينة', category: 'train' },
-  { id: 'madina-hotel-train', name: 'Medina Hotel to Medina train station', nameAr: 'فندق المدينة إلى محطة قطار المدينة', category: 'train' },
-  
+  { id: 'makkah-train-station', name: 'Makkah Hotel to Train Station', nameAr: 'فندق مكة إلى محطة القطار', category: 'train' },
+  { id: 'train-station-makkah', name: 'Train Station to Makkah Hotel', nameAr: 'محطة القطار إلى فندق مكة', category: 'train' },
+  { id: 'madina-train-hotel', name: 'Madinah Train Station to Madinah Hotel', nameAr: 'محطة قطار المدينة إلى فندق المدينة', category: 'train' },
+  { id: 'madina-hotel-train', name: 'Madinah Hotel to Madinah Train Station', nameAr: 'فندق المدينة إلى محطة قطار المدينة', category: 'train' },
+
   // Meeqat Services
   { id: 'masjid-ayesha', name: 'Masjid Ayesha Meeqat', nameAr: 'ميقات مسجد عائشة', category: 'meeqat' },
   { id: 'masjid-jurana', name: 'Masjid Jurana Meeqat', nameAr: 'ميقات مسجد الجعرانة', category: 'meeqat' },
-  
+
   // Hourly Rental
   { id: 'hourly', name: 'Per Hour Rate', nameAr: 'السعر بالساعة', category: 'hourly' },
 ];
@@ -198,7 +223,13 @@ export const services: Service[] = [
 // STANDARD PRICING - NORMAL PRICES
 // ============================================================
 // Change these numbers to update the normal price for each vehicle.
-export const standardPricing: Record<string, Record<string, number>> = {
+// Route mapping used from the shared rate card:
+// - Jeddah Airport To Makkah = jeddah-airport-makkah
+// - Makkah To Jeddah = makkah-hotel-jeddah-airport
+// - Jeddah Airport To Madinah = jeddah-airport-madina
+// - Madinah To Jeddah Airport = madina-jeddah-airport
+// - COASTER column = coaster vehicle
+export const standardPricing: PricingTable = {
   camry: {
     'jabal-khandamah': 150,
     'jeddah-airport-makkah': 220,
@@ -332,8 +363,6 @@ export const standardPricing: Record<string, Record<string, number>> = {
     'makkah-madina': 750,
     'jeddah-airport-madina': 750,
     'madina-jeddah-airport': 750,
-    'madina-airport-hotel': 500,
-    'madina-hotel-airport': 500,
     'makkah-ziyarat': 350,
     'madina-ziyarat': 350,
     'jeddah-taif': 1800,
@@ -351,159 +380,50 @@ export const standardPricing: Record<string, Record<string, number>> = {
   },
 };
 
-
 // ============================================================
 // RAMADAN PRICING - SEASONAL PRICES
 // ============================================================
-// Change these numbers to update Ramadan prices.
-// These prices are used only when bookingPriceSettings.useRamadanPricing is true.
-export const ramadanPricing: Record<string, Record<string, number>> = {
-  camry: {
-    'jabal-khandamah': 195,
-    'jeddah-airport-makkah': 325,
-    'jeddah-airport-jeddah': 195,
-    'makkah-madina': 585,
-    'jeddah-airport-madina': 650,
-    'madina-airport-hotel': 195,
-    'madina-hotel-airport': 156,
-    'makkah-ziyarat': 325,
-    'madina-ziyarat': 325,
-    'jeddah-taif': 910,
-    'makkah-taif': 650,
-    'madina-makkah': 650,
-    'makkah-hotel-jeddah-airport': 260,
-    'masjid-ayesha': 195,
-    'masjid-jurana': 195,
-    'madina-ziyarat-wadiya': 390,
-    'makkah-train-station': 156,
-    'train-station-makkah': 195,
-    'madina-train-hotel': 195,
-    'madina-hotel-train': 156,
-    'jeddah-hotel-airport': 195,
-    'hourly': 130,
-  },
-  h1: {
-    'jabal-khandamah': 221,
-    'jeddah-airport-makkah': 455,
-    'jeddah-hotel-airport': 260,
-    'jeddah-airport-jeddah': 260,
-    'makkah-madina': 715,
-    'jeddah-airport-madina': 780,
-    'madina-airport-hotel': 260,
-    'madina-hotel-airport': 195,
-    'makkah-ziyarat': 390,
-    'madina-ziyarat': 390,
-    'jeddah-taif': 1040,
-    'makkah-taif': 780,
-    'hourly': 195,
-    'madina-makkah': 715,
-    'makkah-hotel-jeddah-airport': 390,
-    'masjid-ayesha': 195,
-    'masjid-jurana': 195,
-    'madina-ziyarat-wadiya': 520,
-    'makkah-train-station': 195,
-    'train-station-makkah': 195,
-    'madina-train-hotel': 195,
-    'madina-hotel-train': 195,
-  },
-  staria: {
-    'jabal-khandamah': 221,
-    'jeddah-airport-makkah': 455,
-    'jeddah-hotel-airport': 260,
-    'jeddah-airport-jeddah': 260,
-    'makkah-madina': 715,
-    'jeddah-airport-madina': 780,
-    'madina-airport-hotel': 260,
-    'madina-hotel-airport': 195,
-    'makkah-ziyarat': 390,
-    'madina-ziyarat': 390,
-    'jeddah-taif': 1040,
-    'makkah-taif': 780,
-    'hourly': 195,
-    'madina-makkah': 715,
-    'makkah-hotel-jeddah-airport': 390,
-    'masjid-ayesha': 195,
-    'masjid-jurana': 195,
-    'madina-ziyarat-wadiya': 520,
-    'makkah-train-station': 195,
-    'train-station-makkah': 195,
-    'madina-train-hotel': 195,
-    'madina-hotel-train': 195,
-  },
-  hiace: {
-    'jabal-khandamah': 260,
-    'jeddah-airport-makkah': 585,
-    'jeddah-airport-jeddah': 390,
-    'jeddah-hotel-airport': 390,
-    'makkah-madina': 910,
-    'jeddah-airport-madina': 1040,
-    'madina-airport-hotel': 455,
-    'madina-hotel-airport': 390,
-    'makkah-ziyarat': 520,
-    'madina-ziyarat': 455,
-    'jeddah-taif': 1950,
-    'makkah-taif': 1040,
-    'hourly': 260,
-    'madina-makkah': 910,
-    'makkah-hotel-jeddah-airport': 520,
-    'madina-ziyarat-wadiya': 650,
-    'masjid-ayesha': 325,
-    'masjid-jurana': 325,
-    'makkah-train-station': 325,
-    'train-station-makkah': 325,
-    'madina-train-hotel': 325,
-    'madina-hotel-train': 325,
-  },
-  yukon: {
-    'jabal-khandamah': 325,
-    'jeddah-airport-makkah': 650,
-    'jeddah-airport-jeddah': 390,
-    'jeddah-hotel-airport': 325,
-    'makkah-madina': 1560,
-    'jeddah-airport-madina': 1560,
-    'madina-airport-hotel': 390,
-    'madina-hotel-airport': 390,
-    'makkah-ziyarat': 650,
-    'madina-ziyarat': 520,
-    'jeddah-taif': 1560,
-    'makkah-taif': 1170,
-    'hourly': 260,
-    'madina-makkah': 1560,
-    'makkah-hotel-jeddah-airport': 650,
-    'madina-ziyarat-wadiya': 780,
-    'masjid-ayesha': 390,
-    'masjid-jurana': 390,
-    'makkah-train-station': 390,
-    'train-station-makkah': 390,
-    'madina-train-hotel': 390,
-    'madina-hotel-train': 390,
-  },
-  coaster: {
-    'jabal-khandamah': 390,
-    'jeddah-airport-makkah': 1040,
-    'jeddah-airport-jeddah': 650,
-    'jeddah-hotel-airport': 520,
-    'makkah-madina': 1560,
-    'jeddah-airport-madina': 1560,
-    'madina-airport-hotel': 650,
-    'madina-hotel-airport': 650,
-    'makkah-ziyarat': 780,
-    'madina-ziyarat': 715,
-    'jeddah-taif': 2340,
-    'makkah-taif': 1560,
-    'hourly': 390,
-    'madina-makkah': 1560,
-    'makkah-hotel-jeddah-airport': 910,
-    'madina-ziyarat-wadiya': 845,
-    'masjid-ayesha': 390,
-    'masjid-jurana': 520,
-    'makkah-train-station': 520,
-    'train-station-makkah': 520,
-    'madina-train-hotel': 520,
-    'madina-hotel-train': 520,
-  },
+// Ramadan prices are auto-generated from standardPricing so every route stays
+// synced. By default, prices are 30% higher because ramadanPriceMultiplier is 1.3.
+//
+// For a custom Ramadan price, add only the exceptions below.
+// Example:
+// export const ramadanPricingOverrides = {
+//   camry: {
+//     'jeddah-airport-makkah': 300,
+//   },
+// };
+export const ramadanPricingOverrides: Partial<Record<string, Record<string, number>>> = {};
 
-};
+function createRamadanPricing(
+  normalPricing: PricingTable,
+  multiplier: number,
+  overrides: Partial<Record<string, Record<string, number>>>
+): PricingTable {
+  const generatedPricing: PricingTable = {};
+
+  Object.entries(normalPricing).forEach(([vehicleId, servicePrices]) => {
+    generatedPricing[vehicleId] = {};
+    Object.entries(servicePrices).forEach(([serviceId, price]) => {
+      generatedPricing[vehicleId][serviceId] = Math.round(price * multiplier);
+    });
+  });
+
+  Object.entries(overrides).forEach(([vehicleId, serviceOverrides]) => {
+    generatedPricing[vehicleId] = {
+      ...(generatedPricing[vehicleId] ?? {}),
+      ...(serviceOverrides ?? {}),
+    };
+  });
+
+  return generatedPricing;
+}
+
+export const ramadanPricing: PricingTable = createRamadanPricing(
+  standardPricing,
+  bookingPriceSettings.ramadanPriceMultiplier,
+  ramadanPricingOverrides
+);
 
 // ============================================
 // HELPER FUNCTIONS
@@ -529,7 +449,7 @@ export function getAvailableServicesForVehicle(vehicleId: string): Service[] {
   const pricing = bookingPriceSettings.useRamadanPricing ? ramadanPricing : standardPricing;
   const vehiclePricing = pricing[vehicleId];
   if (!vehiclePricing) return [];
-  
+
   return services.filter(s => vehiclePricing[s.id] !== undefined);
 }
 
@@ -537,5 +457,13 @@ export function formatPrice(price: number): string {
   return `${price.toLocaleString()} ${bookingPriceSettings.currencyLabel}`;
 }
 
+export function digitsOnlyPhoneNumber(phoneNumber: string): string {
+  return phoneNumber.replace(/[^0-9]/g, '');
+}
+
+export function buildWhatsAppUrl(message: string): string {
+  return `https://wa.me/${digitsOnlyPhoneNumber(contactSettings.whatsappNumber)}?text=${encodeURIComponent(message)}`;
+}
+
 // Hero banner image
-export const heroBannerImage = '/assets/vehicles/hero.jpg';
+export const heroBannerImage = '/assets/vehicles/hero.webp';

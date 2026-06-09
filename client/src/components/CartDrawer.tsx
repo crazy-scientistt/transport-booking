@@ -6,8 +6,7 @@
   - WhatsApp integration button
 */
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Trash2, ShoppingBag, MessageCircle, AlertCircle } from 'lucide-react';
+import { Trash2, ShoppingBag, MessageCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -26,13 +25,7 @@ function CartItemCard({ item, onRemove }: { item: CartItem; onRemove: () => void
   const details = getItemDetails(item);
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="bg-white rounded-lg p-4 border border-border/50 shadow-sm"
-    >
+    <div className="bg-white rounded-lg p-4 border border-border/50 shadow-sm">
       <div className="flex justify-between items-start gap-3">
         <div className="flex-1 min-w-0">
           <h4 className="font-semibold text-foreground truncate">{details.serviceName}</h4>
@@ -43,7 +36,7 @@ function CartItemCard({ item, onRemove }: { item: CartItem; onRemove: () => void
           </div>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <p className="font-display text-lg font-bold text-emerald">
+          <p className="font-display text-lg font-bold text-emerald whitespace-nowrap">
             {details.formattedPrice}
           </p>
           <Button
@@ -51,12 +44,13 @@ function CartItemCard({ item, onRemove }: { item: CartItem; onRemove: () => void
             size="icon"
             onClick={onRemove}
             className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            aria-label="Remove item"
           >
             <Trash2 className="w-4 h-4" />
           </Button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -90,24 +84,19 @@ export default function CartDrawer({ open, onClose, onCheckout }: CartDrawerProp
           </div>
         ) : (
           <>
-            {/* Cart Items */}
             <ScrollArea className="flex-1 -mx-6 px-6">
               <div className="space-y-3 py-4">
-                <AnimatePresence mode="popLayout">
-                  {items.map((item) => (
-                    <CartItemCard
-                      key={item.id}
-                      item={item}
-                      onRemove={() => removeItem(item.id)}
-                    />
-                  ))}
-                </AnimatePresence>
+                {items.map((item) => (
+                  <CartItemCard
+                    key={item.id}
+                    item={item}
+                    onRemove={() => removeItem(item.id)}
+                  />
+                ))}
               </div>
             </ScrollArea>
 
-            {/* Footer */}
             <div className="flex-shrink-0 pt-4 border-t space-y-4">
-              {/* Summary */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Items ({items.length})</span>
@@ -122,7 +111,6 @@ export default function CartDrawer({ open, onClose, onCheckout }: CartDrawerProp
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="space-y-2">
                 <Button
                   onClick={onCheckout}
@@ -140,11 +128,10 @@ export default function CartDrawer({ open, onClose, onCheckout }: CartDrawerProp
                 </Button>
               </div>
 
-              {/* Info */}
               <div className="flex items-start gap-2 p-3 bg-sand rounded-lg text-xs text-muted-foreground">
                 <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                 <p>
-                  Clicking "Book via WhatsApp" will open WhatsApp with your booking details. 
+                  Clicking &quot;Book via WhatsApp&quot; will open WhatsApp with your booking details.
                   Our team will confirm your reservation shortly.
                 </p>
               </div>

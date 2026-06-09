@@ -1,4 +1,4 @@
-# Premium Transportation Services - Booking Website
+# Umrah Taxi - Booking Website
 
 A professional transportation booking website for Saudi Arabia-based services offering rides between major cities (Jeddah, Makkah, Madina) and religious sites (Ziyarat locations).
 
@@ -82,14 +82,15 @@ Pricing and notice are separate. You can show the notice while using normal pric
 All vehicle prices are in the same file: `client/src/data/pricing.ts`.
 
 - `standardPricing`: normal prices for every car.
-- `ramadanPricing`: Ramadan prices for every car.
+- `ramadanPriceMultiplier`: Ramadan increase percentage.
+- `ramadanPricingOverrides`: optional custom Ramadan price exceptions.
 
 Each section is organized by vehicle ID, then service ID:
 
 ```typescript
 export const standardPricing = {
   camry: {
-    'jeddah-airport-makkah': 250,
+    'jeddah-airport-makkah': 220,
     'makkah-ziyarat': 250,
   },
 };
@@ -98,7 +99,7 @@ export const standardPricing = {
 To change a price, edit the number only. Example:
 
 ```typescript
-'jeddah-airport-makkah': 300,
+'jeddah-airport-makkah': 220,
 ```
 
 ### Updating Vehicle Images
@@ -112,7 +113,7 @@ Vehicle images are also stored in `client/src/data/pricing.ts`. To update:
 {
   id: 'camry',
   name: 'Camry',
-  image: 'https://your-cdn.com/new-camry-image.jpg',
+  image: '/assets/vehicles/camry.webp',
 }
 ```
 
@@ -125,7 +126,7 @@ To change the WhatsApp contact number, update it in these files:
 - `client/src/components/Footer.tsx`
 
 ```typescript
-const WHATSAPP_NUMBER = '+966569713833';  // Update this number
+Edit `contactSettings` in `client/src/data/pricing.ts` to update phone/WhatsApp numbers.
 ```
 
 ## Project Structure
