@@ -2,11 +2,12 @@
 command = "pnpm run build"
 publish = "dist/public"
 
-[[redirects]]
-from = "https://umrahtaxi.cab/*"
-to = "https://www.umrahtaxi.cab/:splat"
-status = 301
-force = true
+# IMPORTANT:
+# Do not add www/non-www or trailing-slash 301 redirects here.
+# The previous SEO package forced a specific host and route trailing slashes.
+# If the DNS/host/Cloudflare panel is configured differently, those rules
+# create ERR_TOO_MANY_REDIRECTS.
+# Canonical URLs are now handled in sitemap/meta only, not by app-level redirects.
 
 [[headers]]
 for = "/assets/*"
@@ -35,78 +36,8 @@ for = "/index.html"
   [headers.values]
   Cache-Control = "public, max-age=0, must-revalidate"
 
-[[redirects]]
-from = "/jeddah-airport-to-makkah-taxi"
-to = "/jeddah-airport-to-makkah-taxi/"
-status = 301
-force = true
-
-[[redirects]]
-from = "/makkah-to-madinah-taxi"
-to = "/makkah-to-madinah-taxi/"
-status = 301
-force = true
-
-[[redirects]]
-from = "/madinah-to-makkah-taxi"
-to = "/madinah-to-makkah-taxi/"
-status = 301
-force = true
-
-[[redirects]]
-from = "/makkah-to-jeddah-airport-taxi"
-to = "/makkah-to-jeddah-airport-taxi/"
-status = 301
-force = true
-
-[[redirects]]
-from = "/jeddah-airport-to-madinah-taxi"
-to = "/jeddah-airport-to-madinah-taxi/"
-status = 301
-force = true
-
-[[redirects]]
-from = "/madinah-airport-to-hotel-taxi"
-to = "/madinah-airport-to-hotel-taxi/"
-status = 301
-force = true
-
-[[redirects]]
-from = "/makkah-ziyarat-taxi"
-to = "/makkah-ziyarat-taxi/"
-status = 301
-force = true
-
-[[redirects]]
-from = "/madinah-ziyarat-taxi"
-to = "/madinah-ziyarat-taxi/"
-status = 301
-force = true
-
-[[redirects]]
-from = "/taif-ziyarat-taxi"
-to = "/taif-ziyarat-taxi/"
-status = 301
-force = true
-
-[[redirects]]
-from = "/umrah-taxi-prices"
-to = "/umrah-taxi-prices/"
-status = 301
-force = true
-
-[[redirects]]
-from = "/private-umrah-taxi-for-family"
-to = "/private-umrah-taxi-for-family/"
-status = 301
-force = true
-
-[[redirects]]
-from = "/hiace-coaster-group-taxi-umrah"
-to = "/hiace-coaster-group-taxi-umrah/"
-status = 301
-force = true
-
+# React/Vite SPA fallback. This is a rewrite, not a browser redirect.
+# It lets /makkah-ziyarat-taxi/ and other SEO URLs load without a redirect loop.
 [[redirects]]
 from = "/*"
 to = "/index.html"

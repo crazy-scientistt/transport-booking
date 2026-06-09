@@ -6,7 +6,6 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const canonicalHost = 'www.umrahtaxi.cab';
 
 function stripTrailingSlash(value: string) {
   if (value === '/') return value;
@@ -17,26 +16,20 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
-  // Serve static files from dist/public in production
+  // Serve static files from dist/public in production.
   const staticPath =
     process.env.NODE_ENV === 'production'
       ? path.resolve(__dirname, 'public')
       : path.resolve(__dirname, '..', 'dist', 'public');
 
-  app.use((req, res, next) => {
-    const host = req.headers.host?.split(':')[0];
-
-    if (process.env.NODE_ENV === 'production' && host === 'umrahtaxi.cab') {
-      res.redirect(301, `https://${canonicalHost}${req.originalUrl}`);
-      return;
-    }
-
-    next();
-  });
-
+  // No host canonicalization here.
+  // Domain-level redirects belong in the hosting/DNS layer only. Keeping them
+  // out of the app prevents www/non-www redirect loops when Cloudflare,
+  // Netlify, Vercel, Railway, or another proxy already manages the canonical host.
   app.use(express.static(staticPath, { redirect: false }));
 
   // Handle client-side routes and serve generated SEO HTML files when present.
+  // Both /route and /route/ resolve to dist/public/route/index.html without redirecting.
   app.get('*', (req, res) => {
     const normalizedPath = stripTrailingSlash(req.path);
     const safePath = normalizedPath.replace(/^\/+/, '').replace(/\.\./g, '');

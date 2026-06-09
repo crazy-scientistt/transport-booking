@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.umrahtaxi.cab/sitemap.xml
+Sitemap: https://umrahtaxi.cab/sitemap.xml

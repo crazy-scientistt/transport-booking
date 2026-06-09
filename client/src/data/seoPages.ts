@@ -27,7 +27,7 @@ export interface SeoPage {
 export const siteConfig = {
   name: 'Umrah Taxi',
   legalName: 'Umrah Taxi',
-  url: 'https://www.umrahtaxi.cab',
+  url: 'https://umrahtaxi.cab',
   defaultImage: '/assets/vehicles/hero.webp',
   phone: '+966579693883',
   areaServed: ['Jeddah', 'Makkah', 'Madinah', 'Taif'],

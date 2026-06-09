@@ -9,7 +9,7 @@ const distDir = path.join(projectRoot, 'dist', 'public');
 const indexPath = path.join(distDir, 'index.html');
 const seoPagesPath = path.join(projectRoot, 'client', 'src', 'data', 'seoPages.json');
 
-const SITE_URL = 'https://www.umrahtaxi.cab';
+const SITE_URL = 'https://umrahtaxi.cab';
 const SITE_NAME = 'Umrah Taxi';
 const PHONE = '+966579693883';
 const HERO_IMAGE = `${SITE_URL}/assets/vehicles/hero.webp`;

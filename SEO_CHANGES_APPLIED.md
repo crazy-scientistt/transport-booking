@@ -1,6 +1,6 @@
 # SEO Changes Applied
 
-This project was updated to improve SEO for www.umrahtaxi.cab while keeping the existing visual design and booking flow intact.
+This project was updated to improve SEO for umrahtaxi.cab while keeping the existing visual design and booking flow intact.
 
 ## Main SEO Improvements
 
@@ -74,7 +74,7 @@ vite build && node scripts/generate-seo-pages.mjs && esbuild server/index.ts --p
 After deployment, submit this sitemap in Google Search Console:
 
 ```text
-https://www.umrahtaxi.cab/sitemap.xml
+https://umrahtaxi.cab/sitemap.xml
 ```
 
 ## Ranking Note
