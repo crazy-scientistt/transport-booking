@@ -1,12 +1,14 @@
-import { Toaster } from "@/components/ui/sonner";
-import { Route, Switch } from "wouter";
-import { lazy, Suspense } from "react";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { CartProvider } from "./contexts/CartContext";
-import Home from "./pages/Home";
+import { Toaster } from '@/components/ui/sonner';
+import { Route, Switch } from 'wouter';
+import { lazy, Suspense } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { CartProvider } from './contexts/CartContext';
+import Home from './pages/Home';
+import SeoRoutePage from './pages/SeoRoutePage';
+import { seoPages } from './data/seoPages';
 
-const NotFound = lazy(() => import("./pages/NotFound"));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 function LoadingFallback() {
   return (
@@ -17,11 +19,18 @@ function LoadingFallback() {
 }
 
 function Router() {
+  const seoRouteEntries = seoPages.flatMap((page) => [page.path, `${page.path}/`].map((path) => ({ path, page })));
+
   return (
     <Suspense fallback={<LoadingFallback />}>
       <Switch>
-        <Route path={"/"} component={Home} />
-        <Route path={"/404"} component={NotFound} />
+        <Route path="/" component={Home} />
+        {seoRouteEntries.map(({ path, page }) => (
+          <Route key={path} path={path}>
+            {() => <SeoRoutePage page={page} />}
+          </Route>
+        ))}
+        <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

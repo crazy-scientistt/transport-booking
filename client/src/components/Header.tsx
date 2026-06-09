@@ -18,6 +18,7 @@ interface HeaderProps {
 const navLinks = [
   { href: '#vehicles', label: 'Our Fleet' },
   { href: '#services', label: 'Services' },
+  { href: '#routes', label: 'Routes' },
   { href: '#about', label: 'About Us' },
   { href: '#contact', label: 'Contact' },
 ];
@@ -42,6 +43,8 @@ export default function Header({ onCartClick }: HeaderProps) {
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.href = `/${href}`;
     }
     setMobileMenuOpen(false);
   };
@@ -65,9 +68,9 @@ export default function Header({ onCartClick }: HeaderProps) {
               <span className="font-display text-lg font-bold">U</span>
             </div>
             <div>
-              <h1 className={`font-display text-lg md:text-xl font-semibold transition-colors ${textClass} group-hover:text-gold`}>
+              <span className={`block font-display text-lg md:text-xl font-semibold transition-colors ${textClass} group-hover:text-gold`}>
                 Umrah Taxi
-              </h1>
+              </span>
               <p className={`hidden sm:block text-xs -mt-1 transition-colors ${mutedTextClass}`}>
                 Sacred Journey Services
               </p>

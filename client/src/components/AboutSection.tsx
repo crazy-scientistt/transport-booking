@@ -50,10 +50,9 @@ export default function AboutSection() {
             </h2>
             <div className="w-20 h-1 bg-gradient-to-r from-gold to-gold-dark mb-6" />
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              With years of experience serving pilgrims and travelers in Saudi Arabia,
-              we understand the importance of reliable, comfortable, and respectful
-              transportation services. Our mission is to make your sacred journey
-              as smooth and memorable as possible.
+              We provide private Umrah taxi service across Jeddah, Makkah, Madinah, and Taif.
+              Our team focuses on reliable airport pickup, intercity transfers, Ziyarat trips,
+              comfortable vehicles, and clear WhatsApp booking for pilgrims and families.
             </p>
 
             <div className="grid sm:grid-cols-2 gap-6">
@@ -87,9 +86,9 @@ export default function AboutSection() {
               <h4 className="font-display text-lg font-semibold mb-4">Why Choose Us?</h4>
               <ul className="space-y-3">
                 {[
-                  'Licensed and insured transportation',
+                  'Private airport and hotel transfers',
                   'Clean and well-maintained vehicles',
-                  'Competitive and transparent pricing',
+                  'Clear route prices in SAR',
                   'Easy WhatsApp booking process',
                   'Multilingual driver support',
                 ].map((point) => (

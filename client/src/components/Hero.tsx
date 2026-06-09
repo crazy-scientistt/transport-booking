@@ -26,7 +26,7 @@ export default function Hero({ onBookNow }: HeroProps) {
       <div className="absolute inset-0">
         <img
           src={heroBannerImage}
-          alt="Luxury transportation in Saudi Arabia"
+          alt="Private Umrah taxi service in Saudi Arabia for Jeddah, Makkah and Madinah"
           className="w-full h-full object-cover"
           width={1920}
           height={1072}
@@ -42,17 +42,17 @@ export default function Hero({ onBookNow }: HeroProps) {
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/20 backdrop-blur-sm border border-gold/30 mb-6 animate-fade-in-up">
             <Star className="w-4 h-4 text-gold fill-gold" />
-            <span className="text-sm font-medium text-white/90">Premium Transportation Services</span>
+            <span className="text-sm font-medium text-white/90">Jeddah Airport • Makkah • Madinah • Ziyarat</span>
           </div>
 
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6 animate-fade-in-up animation-delay-100">
-            Your Sacred Journey{' '}
-            <span className="text-gold">Begins Here</span>
+            Private Umrah Taxi Service{' '}
+            <span className="text-gold">in Saudi Arabia</span>
           </h1>
 
           <p className="font-body text-lg md:text-xl text-white/80 mb-8 max-w-2xl animate-fade-in-up animation-delay-200">
-            Experience premium transportation between Jeddah, Makkah, and Madinah.
-            Professional drivers, comfortable vehicles, and seamless booking for pilgrims and travelers.
+            Book private taxi service for Jeddah Airport to Makkah, Makkah to Madinah,
+            Madinah airport transfers, Ziyarat tours, families and pilgrim groups.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up animation-delay-300">

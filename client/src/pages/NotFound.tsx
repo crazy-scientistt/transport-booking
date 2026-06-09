@@ -1,13 +1,22 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle, Home } from "lucide-react";
-import { useLocation } from "wouter";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { AlertCircle, Home } from 'lucide-react';
+import { useLocation } from 'wouter';
+import { useDocumentSeo } from '@/lib/seo';
 
 export default function NotFound() {
+  useDocumentSeo({
+    title: 'Page Not Found | Umrah Taxi',
+    description:
+      'The page you are looking for was not found. Return to Umrah Taxi to book airport transfers, Makkah to Madinah taxi service and Ziyarat trips.',
+    path: '/404',
+    noIndex: true,
+  });
+
   const [, setLocation] = useLocation();
 
   const handleGoHome = () => {
-    setLocation("/");
+    setLocation('/');
   };
 
   return (
@@ -28,7 +37,7 @@ export default function NotFound() {
           </h2>
 
           <p className="text-slate-600 mb-8 leading-relaxed">
-            Sorry, the page you are looking for doesn't exist.
+            Sorry, the page you are looking for does not exist.
             <br />
             It may have been moved or deleted.
           </p>

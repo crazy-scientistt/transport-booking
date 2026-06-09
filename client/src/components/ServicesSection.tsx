@@ -32,12 +32,12 @@ export default function ServicesSection({ onCategoryClick }: ServicesSectionProp
             Our Services
           </span>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Transportation Services
+            Umrah Taxi Services
           </h2>
           <div className="w-20 h-1 bg-gradient-to-r from-gold to-gold-dark mx-auto mb-6" />
           <p className="font-body text-lg text-muted-foreground max-w-2xl mx-auto">
-            From airport transfers to sacred site visits, we offer comprehensive transportation
-            solutions for your entire journey in Saudi Arabia.
+            Book private transportation for Jeddah Airport to Makkah, Makkah to Madinah,
+            Madinah transfers, Makkah Ziyarat, Madinah Ziyarat, Meeqat, and train station trips.
           </p>
         </div>
 

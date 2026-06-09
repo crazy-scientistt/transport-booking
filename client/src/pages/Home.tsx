@@ -13,8 +13,11 @@ import Hero from '@/components/Hero';
 import VehicleFleet from '@/components/VehicleFleet';
 import ServicesSection from '@/components/ServicesSection';
 import AboutSection from '@/components/AboutSection';
+import SeoContentSection from '@/components/SeoContentSection';
 import Footer from '@/components/Footer';
 import FloatingWhatsApp from '@/components/FloatingWhatsApp';
+import { homeFaqs, homeSeo } from '@/data/seoPages';
+import { useDocumentSeo } from '@/lib/seo';
 
 const ServiceSelector = lazy(() => import('@/components/ServiceSelector'));
 const CartDrawer = lazy(() => import('@/components/CartDrawer'));
@@ -22,11 +25,31 @@ const WhatsAppConfirmation = lazy(() => import('@/components/WhatsAppConfirmatio
 const WelcomePopup = lazy(() => import('@/components/WelcomePopup'));
 
 export default function Home() {
+  useDocumentSeo({
+    title: homeSeo.title,
+    description: homeSeo.description,
+    path: homeSeo.path,
+    type: 'website',
+    faqs: homeFaqs,
+  });
+
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [serviceSelectorOpen, setServiceSelectorOpen] = useState(false);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [whatsappModalOpen, setWhatsappModalOpen] = useState(false);
   const [welcomePopupOpen, setWelcomePopupOpen] = useState(false);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (!hash) return;
+
+    const timer = window.setTimeout(() => {
+      const element = document.querySelector(hash);
+      element?.scrollIntoView({ behavior: 'smooth' });
+    }, 250);
+
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (!bookingPriceSettings.showWelcomePopupOnFirstVisit) return;
@@ -79,6 +102,7 @@ export default function Home() {
         <VehicleFleet onSelectVehicle={handleSelectVehicle} />
         <ServicesSection onCategoryClick={handleCategoryClick} />
         <AboutSection />
+        <SeoContentSection />
       </main>
 
       <Footer />

@@ -7,31 +7,21 @@
 
 import { Phone, MapPin, MessageCircle, Clock } from 'lucide-react';
 import { buildWhatsAppUrl, contactSettings } from '@/data/pricing';
+import { getFeaturedSeoPages, routeHref, seoPages } from '@/data/seoPages';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const quickLinks = [
-    { label: 'Our Fleet', href: '#vehicles' },
-    { label: 'Services', href: '#services' },
-    { label: 'About Us', href: '#about' },
-    { label: 'Contact', href: '#contact' },
+    { label: 'Our Fleet', href: '/#vehicles' },
+    { label: 'Services', href: '/#services' },
+    { label: 'Routes', href: '/#routes' },
+    { label: 'Prices', href: routeHref('/umrah-taxi-prices') },
+    { label: 'About Us', href: '/#about' },
+    { label: 'Contact', href: '/#contact' },
   ];
 
-  const services = [
-    'Airport Transfers',
-    'Intercity Travel',
-    'Ziyarat Tours',
-    'Meeqat Services',
-    'Hourly Rental',
-  ];
-
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const topRoutes = getFeaturedSeoPages(6);
 
   return (
     <footer id="contact" className="bg-[#1C1C1E] text-white">
@@ -47,8 +37,8 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-white/60 text-sm leading-relaxed mb-6">
-              Your trusted partner for premium transportation services in Saudi Arabia.
-              Serving pilgrims and travelers with comfort and reliability.
+              Private Umrah taxi service for Jeddah Airport, Makkah, Madinah, Ziyarat tours,
+              family transfers, and intercity travel in Saudi Arabia.
             </p>
             <div className="flex items-center gap-2">
               <a
@@ -68,26 +58,34 @@ export default function Footer() {
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.href}>
-                  <button
-                    onClick={() => scrollToSection(link.href)}
+                  <a
+                    href={link.href}
                     className="text-white/60 hover:text-gold transition-colors text-sm"
                   >
                     {link.label}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="font-display text-lg font-semibold mb-4">Our Services</h4>
+            <h4 className="font-display text-lg font-semibold mb-4">Top Routes</h4>
             <ul className="space-y-3">
-              {services.map((service) => (
-                <li key={service}>
-                  <span className="text-white/60 text-sm">{service}</span>
+              {topRoutes.map((route) => (
+                <li key={route.path}>
+                  <a
+                    href={routeHref(route.path)}
+                    className="text-white/60 hover:text-gold transition-colors text-sm"
+                  >
+                    {route.h1}
+                  </a>
                 </li>
               ))}
             </ul>
+            <a href={routeHref('/umrah-taxi-prices')} className="inline-block mt-4 text-sm text-gold hover:text-white transition-colors">
+              View all Umrah taxi prices
+            </a>
           </div>
 
           <div>
@@ -109,7 +107,7 @@ export default function Footer() {
                 <MapPin className="w-5 h-5 text-gold flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm text-white/60">Service Areas</p>
-                  <p className="text-white">Jeddah, Makkah, Madinah</p>
+                  <p className="text-white">Jeddah, Makkah, Madinah, Taif</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -122,6 +120,21 @@ export default function Footer() {
             </ul>
           </div>
         </div>
+
+        <div className="mt-10 pt-8 border-t border-white/10">
+          <h4 className="font-display text-lg font-semibold mb-4">All Umrah Taxi Routes</h4>
+          <div className="flex flex-wrap gap-x-5 gap-y-3">
+            {seoPages.map((route) => (
+              <a
+                key={route.path}
+                href={routeHref(route.path)}
+                className="text-sm text-white/50 hover:text-gold transition-colors"
+              >
+                {route.h1}
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="border-t border-white/10">
@@ -131,8 +144,8 @@ export default function Footer() {
               © {currentYear} Umrah Taxi. All rights reserved.
             </p>
             <div className="flex items-center gap-6 text-sm text-white/40">
-              <button className="hover:text-white transition-colors">Privacy Policy</button>
-              <button className="hover:text-white transition-colors">Terms of Service</button>
+              <a href="/#contact" className="hover:text-white transition-colors">Privacy Policy</a>
+              <a href="/#contact" className="hover:text-white transition-colors">Terms of Service</a>
             </div>
           </div>
         </div>

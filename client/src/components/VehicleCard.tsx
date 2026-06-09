@@ -29,7 +29,7 @@ export default function VehicleCard({ vehicle, onSelect }: VehicleCardProps) {
       <div className="relative h-48 md:h-56 overflow-hidden bg-sand">
         <img
           src={vehicle.image}
-          alt={vehicle.name}
+          alt={`${vehicle.name} Umrah taxi vehicle for airport transfers and Ziyarat tours`}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           width={1000}
           height={558}

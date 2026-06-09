@@ -1,0 +1,9 @@
+{
+  "name": "Umrah Taxi Cab",
+  "short_name": "Umrah Taxi",
+  "description": "Private Umrah taxi service in Saudi Arabia for Jeddah, Makkah, Madinah, airport transfers and Ziyarat tours.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fffaf0",
+  "theme_color": "#0f6b57"
+}

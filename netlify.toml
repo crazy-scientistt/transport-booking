@@ -2,6 +2,11 @@
 command = "pnpm run build"
 publish = "dist/public"
 
+[[redirects]]
+from = "https://umrahtaxi.cab/*"
+to = "https://www.umrahtaxi.cab/:splat"
+status = 301
+force = true
 
 [[headers]]
 for = "/assets/*"
@@ -14,9 +19,93 @@ for = "/assets/vehicles/*"
   Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
+for = "/sitemap.xml"
+  [headers.values]
+  Cache-Control = "public, max-age=3600"
+  Content-Type = "application/xml; charset=utf-8"
+
+[[headers]]
+for = "/robots.txt"
+  [headers.values]
+  Cache-Control = "public, max-age=3600"
+  Content-Type = "text/plain; charset=utf-8"
+
+[[headers]]
 for = "/index.html"
   [headers.values]
   Cache-Control = "public, max-age=0, must-revalidate"
+
+[[redirects]]
+from = "/jeddah-airport-to-makkah-taxi"
+to = "/jeddah-airport-to-makkah-taxi/"
+status = 301
+force = true
+
+[[redirects]]
+from = "/makkah-to-madinah-taxi"
+to = "/makkah-to-madinah-taxi/"
+status = 301
+force = true
+
+[[redirects]]
+from = "/madinah-to-makkah-taxi"
+to = "/madinah-to-makkah-taxi/"
+status = 301
+force = true
+
+[[redirects]]
+from = "/makkah-to-jeddah-airport-taxi"
+to = "/makkah-to-jeddah-airport-taxi/"
+status = 301
+force = true
+
+[[redirects]]
+from = "/jeddah-airport-to-madinah-taxi"
+to = "/jeddah-airport-to-madinah-taxi/"
+status = 301
+force = true
+
+[[redirects]]
+from = "/madinah-airport-to-hotel-taxi"
+to = "/madinah-airport-to-hotel-taxi/"
+status = 301
+force = true
+
+[[redirects]]
+from = "/makkah-ziyarat-taxi"
+to = "/makkah-ziyarat-taxi/"
+status = 301
+force = true
+
+[[redirects]]
+from = "/madinah-ziyarat-taxi"
+to = "/madinah-ziyarat-taxi/"
+status = 301
+force = true
+
+[[redirects]]
+from = "/taif-ziyarat-taxi"
+to = "/taif-ziyarat-taxi/"
+status = 301
+force = true
+
+[[redirects]]
+from = "/umrah-taxi-prices"
+to = "/umrah-taxi-prices/"
+status = 301
+force = true
+
+[[redirects]]
+from = "/private-umrah-taxi-for-family"
+to = "/private-umrah-taxi-for-family/"
+status = 301
+force = true
+
+[[redirects]]
+from = "/hiace-coaster-group-taxi-umrah"
+to = "/hiace-coaster-group-taxi-umrah/"
+status = 301
+force = true
 
 [[redirects]]
 from = "/*"

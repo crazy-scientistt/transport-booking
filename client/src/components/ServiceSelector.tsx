@@ -5,7 +5,7 @@
   - Gold accents on selected items
 */
 
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Calendar, Clock, Plus, Check, Search, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +30,7 @@ interface ServiceSelectorProps {
   vehicle: Vehicle | null;
   open: boolean;
   onClose: () => void;
+  preferredServiceId?: string;
 }
 
 interface ServiceItemProps {
@@ -194,7 +195,7 @@ function ServiceItem({ service, vehicle, onAddToCart }: ServiceItemProps) {
   );
 }
 
-export default function ServiceSelector({ vehicle, open, onClose }: ServiceSelectorProps) {
+export default function ServiceSelector({ vehicle, open, onClose, preferredServiceId }: ServiceSelectorProps) {
   const { addItem } = useCart();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -203,6 +204,16 @@ export default function ServiceSelector({ vehicle, open, onClose }: ServiceSelec
     if (!vehicle) return [];
     return getAvailableServicesForVehicle(vehicle.id);
   }, [vehicle]);
+
+  useEffect(() => {
+    if (!preferredServiceId) return;
+
+    const preferredService = availableServices.find((service) => service.id === preferredServiceId);
+    if (preferredService) {
+      setSelectedCategory(preferredService.category);
+      setSearchQuery('');
+    }
+  }, [availableServices, preferredServiceId]);
 
   const filteredServices = useMemo(() => {
     let services = availableServices;
@@ -220,8 +231,16 @@ export default function ServiceSelector({ vehicle, open, onClose }: ServiceSelec
       );
     }
 
+    if (preferredServiceId) {
+      services = [...services].sort((a, b) => {
+        if (a.id === preferredServiceId) return -1;
+        if (b.id === preferredServiceId) return 1;
+        return 0;
+      });
+    }
+
     return services;
-  }, [availableServices, selectedCategory, searchQuery]);
+  }, [availableServices, preferredServiceId, selectedCategory, searchQuery]);
 
   const handleAddToCart = (serviceId: string, date: string, time: string, price: number) => {
     if (!vehicle) return;

@@ -21,12 +21,12 @@ export default function VehicleFleet({ onSelectVehicle }: VehicleFleetProps) {
             Our Fleet
           </span>
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Choose Your Vehicle
+            Choose Your Umrah Taxi Vehicle
           </h2>
           <div className="w-20 h-1 bg-gradient-to-r from-gold to-gold-dark mx-auto mb-6" />
           <p className="font-body text-lg text-muted-foreground max-w-2xl mx-auto">
-            Select from our premium fleet of vehicles, each maintained to the highest standards
-            for your comfort and safety during your sacred journey.
+            Select cars, vans, SUVs, Hiace, and Coaster vehicles for airport transfers,
+            Makkah to Madinah trips, Ziyarat tours, and family Umrah travel.
           </p>
         </div>
 
