@@ -7,7 +7,7 @@
 import { motion } from 'framer-motion';
 import { MessageCircle } from 'lucide-react';
 
-const WHATSAPP_NUMBER = '+966569713833';
+const WHATSAPP_NUMBER = '+966579693883';
 
 export default function FloatingWhatsApp() {
   const handleClick = () => {
