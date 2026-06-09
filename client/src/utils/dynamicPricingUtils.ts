@@ -1,30 +1,23 @@
 /**
- * Dynamic Pricing Utility
- * Determines pricing based on date (Ramadan detection)
- * Replaces manual USE_RAMADAN_PRICING toggle
- * 
- * PRICING APPLIED: Day 18 to end of Ramadan (configurable in ramadanUtils.ts)
+ * Pricing Utility
+ * Uses the single control file: client/src/data/pricing.ts
+ *
+ * Important:
+ * - Ramadan pricing is now manual, not automatic by date.
+ * - Change bookingPriceSettings.useRamadanPricing in pricing.ts.
  */
 
-import { isDateInRamadanPricingPeriod } from './ramadanUtils';
-import { standardPricing, ramadanPricing } from '@/data/pricing';
+import { standardPricing, ramadanPricing, bookingPriceSettings } from '@/data/pricing';
 
 /**
- * Get the appropriate pricing tier for a given date
- * @param date The booking date to check
- * @returns 'ramadan' if during Ramadan pricing period (day 18+), 'standard' otherwise
+ * Get the active pricing tier.
+ * @param _date Kept for compatibility; pricing is controlled manually from pricing.ts.
+ * @returns 'ramadan' when enabled in pricing.ts, otherwise 'standard'
  */
 export async function getPricingTierForDate(
-  date: Date
+  _date: Date
 ): Promise<'ramadan' | 'standard'> {
-  try {
-    const inRamadanPricingPeriod = await isDateInRamadanPricingPeriod(date);
-    return inRamadanPricingPeriod ? 'ramadan' : 'standard';
-  } catch (error) {
-    console.error('Error determining pricing tier:', error);
-    // Fallback to standard pricing if detection fails
-    return 'standard';
-  }
+  return bookingPriceSettings.useRamadanPricing ? 'ramadan' : 'standard';
 }
 
 /**
@@ -69,26 +62,14 @@ export async function getPriceForServiceOnDate(
 }
 
 /**
- * Batch check multiple dates to determine pricing
- * Useful for multi-day bookings
- * @param dates Array of dates to check
- * @returns 'ramadan' if any date is during Ramadan pricing period, 'standard' otherwise
+ * Get the active pricing tier for date ranges.
+ * @param _dates Kept for compatibility; pricing is controlled manually from pricing.ts.
+ * @returns 'ramadan' when enabled in pricing.ts, otherwise 'standard'
  */
 export async function getPricingTierForDateRange(
-  dates: Date[]
+  _dates: Date[]
 ): Promise<'ramadan' | 'standard'> {
-  try {
-    for (const date of dates) {
-      const inRamadanPricingPeriod = await isDateInRamadanPricingPeriod(date);
-      if (inRamadanPricingPeriod) {
-        return 'ramadan';
-      }
-    }
-    return 'standard';
-  } catch (error) {
-    console.error('Error determining pricing tier for date range:', error);
-    return 'standard';
-  }
+  return bookingPriceSettings.useRamadanPricing ? 'ramadan' : 'standard';
 }
 
 /**

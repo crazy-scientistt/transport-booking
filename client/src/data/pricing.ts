@@ -1,7 +1,44 @@
-// ============================================
-// DEVELOPER TOGGLE - Change this for Ramadan
-// ============================================
-export const USE_RAMADAN_PRICING = false; // flase for standard
+// ============================================================
+// MAIN FILE FOR RAMADAN SETTINGS, NOTICE TEXT, AND ALL PRICES
+// ============================================================
+// Edit this file when you want to change pricing or Ramadan behavior.
+//
+// Most common changes:
+// - Ramadan pricing ON/OFF: bookingPriceSettings.useRamadanPricing
+// - Ramadan notice ON/OFF: bookingPriceSettings.showRamadanNotice
+// - Ramadan notice wording: bookingPriceSettings.ramadanNoticeTitle/message
+// - Normal prices: standardPricing section below
+// - Ramadan prices: ramadanPricing section below
+//
+// Important: pricing and notice are separate.
+// You can show the Ramadan notice while using normal prices, or use Ramadan
+// prices while hiding the notice.
+// ============================================================
+export const bookingPriceSettings: {
+  useRamadanPricing: boolean;
+  showRamadanNotice: boolean;
+  ramadanNoticeTitle: string;
+  ramadanNoticeMessage: string;
+  currencyLabel: string;
+} = {
+  // true  = use the ramadanPricing list below
+  // false = use the standardPricing list below
+  useRamadanPricing: false,
+
+  // true  = show the Ramadan notice in the welcome popup
+  // false = hide the Ramadan notice from the welcome popup
+  showRamadanNotice: false,
+
+  // Change these two lines to change the popup notice wording.
+  ramadanNoticeTitle: 'Ramadan Notice:',
+  ramadanNoticeMessage: 'All prices are 30% higher fare from 18 to 30 Ramadan',
+
+  // Change this only if you want another currency label in the UI.
+  currencyLabel: 'SAR',
+};
+
+// Backwards-compatible export for any old code/imports.
+export const USE_RAMADAN_PRICING = bookingPriceSettings.useRamadanPricing;
 
 // ============================================
 // VEHICLE TYPES
@@ -157,131 +194,133 @@ export const services: Service[] = [
   { id: 'hourly', name: 'Per Hour Rate', nameAr: 'السعر بالساعة', category: 'hourly' },
 ];
 
-// ============================================
-// STANDARD PRICING (Regular Season)
-// ============================================
+// ============================================================
+// STANDARD PRICING - NORMAL PRICES
+// ============================================================
+// Change these numbers to update the normal price for each vehicle.
+// Example: to change Camry Jeddah Airport to Makkah, edit this line:
+// 'jeddah-airport-makkah': 250,
 export const standardPricing: Record<string, Record<string, number>> = {
-  // Regular pricing
-camry: {
-  'jabal-khandamah': 150,
-  'jeddah-airport-makkah': 250,
-  'jeddah-airport-jeddah': 150,
-  'makkah-madina': 450,
-  'jeddah-airport-madina': 500,
-  'madina-airport-hotel': 150,
-  'madina-hotel-airport': 120,
-  'makkah-ziyarat': 250,
-  'madina-ziyarat': 250,
-  'jeddah-taif': 700,
-  'makkah-taif': 500,
-  'madina-makkah': 500,
-  'makkah-hotel-jeddah-airport': 200,
-  'masjid-ayesha': 150,
-  'masjid-jurana': 150,
-  'madina-ziyarat-wadiya': 300,
-  'makkah-train-station': 120,
-  'train-station-makkah': 150,
-  'madina-train-hotel': 150,
-  'madina-hotel-train': 120,
-  'jeddah-hotel-airport': 150,
-  'hourly': 100,
-},
-h1: {
-  'jabal-khandamah': 170,
-  'jeddah-airport-makkah': 350,
-  'jeddah-hotel-airport': 200,
-  'jeddah-airport-jeddah': 200,
-  'makkah-madina': 550,
-  'jeddah-airport-madina': 600,
-  'madina-airport-hotel': 200,
-  'madina-hotel-airport': 150,
-  'makkah-ziyarat': 300,
-  'madina-ziyarat': 300,
-  'jeddah-taif': 800,
-  'makkah-taif': 600,
-  'hourly': 150,
-  'madina-makkah': 550,
-  'makkah-hotel-jeddah-airport': 300,
-  'masjid-ayesha': 150,
-  'masjid-jurana': 150,
-  'madina-ziyarat-wadiya': 400,
-  'makkah-train-station': 150,
-  'train-station-makkah': 150,
-  'madina-train-hotel': 150,
-  'madina-hotel-train': 150,
-},
-staria: {
-  'jabal-khandamah': 170,
-  'jeddah-airport-makkah': 350,
-  'jeddah-hotel-airport': 200,
-  'jeddah-airport-jeddah': 200,
-  'makkah-madina': 550,
-  'jeddah-airport-madina': 600,
-  'madina-airport-hotel': 200,
-  'madina-hotel-airport': 150,
-  'makkah-ziyarat': 300,
-  'madina-ziyarat': 300,
-  'jeddah-taif': 800,
-  'makkah-taif': 600,
-  'hourly': 150,
-  'madina-makkah': 550,
-  'makkah-hotel-jeddah-airport': 300,
-  'masjid-ayesha': 150,
-  'masjid-jurana': 150,
-  'madina-ziyarat-wadiya': 400,
-  'makkah-train-station': 150,
-  'train-station-makkah': 150,
-  'madina-train-hotel': 150,
-  'madina-hotel-train': 150,
-},
-hiace: {
-  'jabal-khandamah': 200,
-  'jeddah-airport-makkah': 450,
-  'jeddah-airport-jeddah': 300,
-  'jeddah-hotel-airport': 300,
-  'makkah-madina': 700,
-  'jeddah-airport-madina': 800,
-  'madina-airport-hotel': 350,
-  'madina-hotel-airport': 300,
-  'makkah-ziyarat': 400,
-  'madina-ziyarat': 350,
-  'jeddah-taif': 1500,
-  'makkah-taif': 800,
-  'hourly': 200,
-  'madina-makkah': 700,
-  'makkah-hotel-jeddah-airport': 400,
-  'madina-ziyarat-wadiya': 500,
-  'masjid-ayesha': 250,
-  'masjid-jurana': 250,
-  'makkah-train-station': 250,
-  'train-station-makkah': 250,
-  'madina-train-hotel': 250,
-  'madina-hotel-train': 250,
-},
-yukon: {
-  'jabal-khandamah': 250,
-  'jeddah-airport-makkah': 500,
-  'jeddah-airport-jeddah': 300,
-  'jeddah-hotel-airport': 250,
-  'makkah-madina': 1200,
-  'jeddah-airport-madina': 1200,
-  'madina-airport-hotel': 300,
-  'madina-hotel-airport': 300,
-  'makkah-ziyarat': 500,
-  'madina-ziyarat': 400,
-  'jeddah-taif': 1200,
-  'makkah-taif': 900,
-  'hourly': 200,
-  'madina-makkah': 1200,
-  'makkah-hotel-jeddah-airport': 500,
-  'madina-ziyarat-wadiya': 600,
-  'masjid-ayesha': 300,
-  'masjid-jurana': 300,
-  'makkah-train-station': 300,
-  'train-station-makkah': 300,
-  'madina-train-hotel': 300,
-  'madina-hotel-train': 300,
-},
+  camry: {
+    'jabal-khandamah': 150,
+    'jeddah-airport-makkah': 250,
+    'jeddah-airport-jeddah': 150,
+    'makkah-madina': 450,
+    'jeddah-airport-madina': 500,
+    'madina-airport-hotel': 150,
+    'madina-hotel-airport': 120,
+    'makkah-ziyarat': 250,
+    'madina-ziyarat': 250,
+    'jeddah-taif': 700,
+    'makkah-taif': 500,
+    'madina-makkah': 500,
+    'makkah-hotel-jeddah-airport': 200,
+    'masjid-ayesha': 150,
+    'masjid-jurana': 150,
+    'madina-ziyarat-wadiya': 300,
+    'makkah-train-station': 120,
+    'train-station-makkah': 150,
+    'madina-train-hotel': 150,
+    'madina-hotel-train': 120,
+    'jeddah-hotel-airport': 150,
+    'hourly': 100,
+  },
+  h1: {
+    'jabal-khandamah': 170,
+    'jeddah-airport-makkah': 350,
+    'jeddah-hotel-airport': 200,
+    'jeddah-airport-jeddah': 200,
+    'makkah-madina': 550,
+    'jeddah-airport-madina': 600,
+    'madina-airport-hotel': 200,
+    'madina-hotel-airport': 150,
+    'makkah-ziyarat': 300,
+    'madina-ziyarat': 300,
+    'jeddah-taif': 800,
+    'makkah-taif': 600,
+    'hourly': 150,
+    'madina-makkah': 550,
+    'makkah-hotel-jeddah-airport': 300,
+    'masjid-ayesha': 150,
+    'masjid-jurana': 150,
+    'madina-ziyarat-wadiya': 400,
+    'makkah-train-station': 150,
+    'train-station-makkah': 150,
+    'madina-train-hotel': 150,
+    'madina-hotel-train': 150,
+  },
+  staria: {
+    'jabal-khandamah': 170,
+    'jeddah-airport-makkah': 350,
+    'jeddah-hotel-airport': 200,
+    'jeddah-airport-jeddah': 200,
+    'makkah-madina': 550,
+    'jeddah-airport-madina': 600,
+    'madina-airport-hotel': 200,
+    'madina-hotel-airport': 150,
+    'makkah-ziyarat': 300,
+    'madina-ziyarat': 300,
+    'jeddah-taif': 800,
+    'makkah-taif': 600,
+    'hourly': 150,
+    'madina-makkah': 550,
+    'makkah-hotel-jeddah-airport': 300,
+    'masjid-ayesha': 150,
+    'masjid-jurana': 150,
+    'madina-ziyarat-wadiya': 400,
+    'makkah-train-station': 150,
+    'train-station-makkah': 150,
+    'madina-train-hotel': 150,
+    'madina-hotel-train': 150,
+  },
+  hiace: {
+    'jabal-khandamah': 200,
+    'jeddah-airport-makkah': 450,
+    'jeddah-airport-jeddah': 300,
+    'jeddah-hotel-airport': 300,
+    'makkah-madina': 700,
+    'jeddah-airport-madina': 800,
+    'madina-airport-hotel': 350,
+    'madina-hotel-airport': 300,
+    'makkah-ziyarat': 400,
+    'madina-ziyarat': 350,
+    'jeddah-taif': 1500,
+    'makkah-taif': 800,
+    'hourly': 200,
+    'madina-makkah': 700,
+    'makkah-hotel-jeddah-airport': 400,
+    'madina-ziyarat-wadiya': 500,
+    'masjid-ayesha': 250,
+    'masjid-jurana': 250,
+    'makkah-train-station': 250,
+    'train-station-makkah': 250,
+    'madina-train-hotel': 250,
+    'madina-hotel-train': 250,
+  },
+  yukon: {
+    'jabal-khandamah': 250,
+    'jeddah-airport-makkah': 500,
+    'jeddah-airport-jeddah': 300,
+    'jeddah-hotel-airport': 250,
+    'makkah-madina': 1200,
+    'jeddah-airport-madina': 1200,
+    'madina-airport-hotel': 300,
+    'madina-hotel-airport': 300,
+    'makkah-ziyarat': 500,
+    'madina-ziyarat': 400,
+    'jeddah-taif': 1200,
+    'makkah-taif': 900,
+    'hourly': 200,
+    'madina-makkah': 1200,
+    'makkah-hotel-jeddah-airport': 500,
+    'madina-ziyarat-wadiya': 600,
+    'masjid-ayesha': 300,
+    'masjid-jurana': 300,
+    'makkah-train-station': 300,
+    'train-station-makkah': 300,
+    'madina-train-hotel': 300,
+    'madina-hotel-train': 300,
+  },
 
   coaster: {
     'jabal-khandamah': 300,
@@ -310,9 +349,11 @@ yukon: {
 };
 
 
- // ============================================
-// RAMADAN PRICING (Seasonal - 30% Higher)
-// ============================================
+// ============================================================
+// RAMADAN PRICING - SEASONAL PRICES
+// ============================================================
+// Change these numbers to update Ramadan prices.
+// These prices are used only when bookingPriceSettings.useRamadanPricing is true.
 export const ramadanPricing: Record<string, Record<string, number>> = {
   camry: {
     'jabal-khandamah': 195,
@@ -465,7 +506,7 @@ export const ramadanPricing: Record<string, Record<string, number>> = {
 // HELPER FUNCTIONS
 // ============================================
 export function getPrice(vehicleId: string, serviceId: string): number | null {
-  const pricing = USE_RAMADAN_PRICING ? ramadanPricing : standardPricing;
+  const pricing = bookingPriceSettings.useRamadanPricing ? ramadanPricing : standardPricing;
   return pricing[vehicleId]?.[serviceId] ?? null;
 }
 
@@ -482,7 +523,7 @@ export function getServicesByCategory(categoryId: string): Service[] {
 }
 
 export function getAvailableServicesForVehicle(vehicleId: string): Service[] {
-  const pricing = USE_RAMADAN_PRICING ? ramadanPricing : standardPricing;
+  const pricing = bookingPriceSettings.useRamadanPricing ? ramadanPricing : standardPricing;
   const vehiclePricing = pricing[vehicleId];
   if (!vehiclePricing) return [];
   
@@ -490,7 +531,7 @@ export function getAvailableServicesForVehicle(vehicleId: string): Service[] {
 }
 
 export function formatPrice(price: number): string {
-  return `${price.toLocaleString()} SAR`;
+  return `${price.toLocaleString()} ${bookingPriceSettings.currencyLabel}`;
 }
 
 // Hero banner image

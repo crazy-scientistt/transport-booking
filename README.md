@@ -49,56 +49,70 @@ pnpm start
 
 ## Configuration
 
-### Ramadan Pricing Toggle
+All pricing and Ramadan controls are now centralized in one file:
 
-To switch between regular and Ramadan pricing:
+`client/src/data/pricing.ts`
 
-1. Open `client/src/data/pricing.ts`
-2. Find the `USE_RAMADAN_PRICING` constant at the top of the file:
+### Main Ramadan controls
+
+At the top of `client/src/data/pricing.ts`, edit this object:
 
 ```typescript
-// ============================================
-// DEVELOPER TOGGLE - Change this for Ramadan
-// ============================================
-export const USE_RAMADAN_PRICING = false;  // Set to true for Ramadan season
+export const bookingPriceSettings = {
+  useRamadanPricing: false,
+  showRamadanNotice: false,
+  ramadanNoticeTitle: 'Ramadan Notice:',
+  ramadanNoticeMessage: 'All prices are 30% higher fare from 18 to 30 Ramadan',
+  currencyLabel: 'SAR',
+};
 ```
 
-3. Change `false` to `true` for Ramadan pricing
-4. Rebuild and redeploy the application
+Use it like this:
+
+- `useRamadanPricing: true` = use the Ramadan price list.
+- `useRamadanPricing: false` = use normal prices.
+- `showRamadanNotice: true` = show the Ramadan notice in the welcome popup.
+- `showRamadanNotice: false` = hide the Ramadan notice.
+- Change `ramadanNoticeTitle` and `ramadanNoticeMessage` to change the wording.
+
+Pricing and notice are separate. You can show the notice while using normal prices, or use Ramadan prices while hiding the notice.
+
+### Updating normal and Ramadan prices
+
+All vehicle prices are in the same file: `client/src/data/pricing.ts`.
+
+- `standardPricing`: normal prices for every car.
+- `ramadanPricing`: Ramadan prices for every car.
+
+Each section is organized by vehicle ID, then service ID:
+
+```typescript
+export const standardPricing = {
+  camry: {
+    'jeddah-airport-makkah': 250,
+    'makkah-ziyarat': 250,
+  },
+};
+```
+
+To change a price, edit the number only. Example:
+
+```typescript
+'jeddah-airport-makkah': 300,
+```
 
 ### Updating Vehicle Images
 
-Vehicle images are stored as URLs in `client/src/data/pricing.ts`. To update:
+Vehicle images are also stored in `client/src/data/pricing.ts`. To update:
 
-1. Upload new images to your preferred CDN or image hosting service
-2. Update the `image` property for each vehicle in the `vehicles` array:
+1. Upload new images to your preferred CDN or image hosting service.
+2. Update the `image` property for each vehicle in the `vehicles` array.
 
 ```typescript
 {
   id: 'camry',
   name: 'Camry',
-  // ... other properties
   image: 'https://your-cdn.com/new-camry-image.jpg',
-}
-```
-
-### Updating Pricing
-
-All pricing is centralized in `client/src/data/pricing.ts`:
-
-- `standardPricing`: Regular season prices
-- `ramadanPricing`: Ramadan season prices
-
-Each pricing object is organized by vehicle ID, then by service ID:
-
-```typescript
-standardPricing: {
-  camry: {
-    'jeddah-airport-makkah': 250,
-    'makkah-ziyarat': 250,
-    // ... more services
-  },
-  // ... more vehicles
 }
 ```
 
